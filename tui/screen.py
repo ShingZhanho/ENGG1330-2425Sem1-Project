@@ -19,11 +19,14 @@ class Screen(object):
         """
         new_scene.register_scene_update_hook(self.print_scene)
         frames = transition(self.__current_scene, new_scene)
+        if len(frames) == 1:
+            time_per_frame = 0
         for frame in frames:
             time.sleep(time_per_frame)
             self.clear_screen()
             print(frame)
         self.__current_scene = new_scene
+        self.print_scene()
 
 
     def print_scene(self, scene: Scene = None):

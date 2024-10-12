@@ -13,6 +13,7 @@ def __ensure_same_size(from_scene: Scene, to_scene: Scene):
 def __get_rendered_tuple(s1: Scene, s2: Scene) -> tuple[list[str], list[str]]:
     return s1.get_rendered(suppress_hook=True), s2.get_rendered(suppress_hook=True)
 
+
 def wipe_up_to_down(from_scene: Scene, to_scene: Scene) -> list[str]:
     """
     Generates frames of a transition where the old scene is wiped from up to down by the new scene.
@@ -71,3 +72,13 @@ def slide_from_bottom(from_scene: Scene, to_scene: Scene) -> list[str]:
     for i in range(to_scene.height):
         frames.append('\n'.join(from_scene_rendered[i+1:] + to_scene_rendered[:i+1]))
     return frames
+
+
+def direct(_: Scene, to_scene: Scene) -> list[str]:
+    """
+    Generates frames of a transition where the new scene is directly shown without any transition.
+    :param _: The old scene (discarded)
+    :param to_scene: The new scene
+    :return: all frames of the transition
+    """
+    return [''.join(to_scene.get_rendered(suppress_hook=True))]
