@@ -30,6 +30,7 @@ class TxtLabel(Control):
     @auto_size.setter
     def auto_size(self, value):
         self._auto_size = value
+        self.render()
 
     @property
     def text(self):
@@ -38,6 +39,7 @@ class TxtLabel(Control):
     @text.setter
     def text(self, value):
         self._text = value
+        self.render()
 
     @property
     def draw_borders(self):
