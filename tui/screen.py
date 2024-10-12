@@ -10,6 +10,7 @@ class Screen(object):
 
         self.__blank_scene = Scene(screen_width, screen_height, ' ')
         self.__current_scene = self.__blank_scene
+        self.__current_scene.register_scene_update_hook(self.print_scene)
         self.__current_scene.render()
 
 
@@ -17,6 +18,7 @@ class Screen(object):
         """
         Transition into a new scene.
         """
+        self.__current_scene.remove_scene_update_hook()
         new_scene.register_scene_update_hook(self.print_scene)
         frames = transition(self.__current_scene, new_scene)
         if len(frames) == 1:
