@@ -63,6 +63,17 @@ class Scene(object):
             self.on_scene_update(self)
 
 
+    def get_rendered(self, force_rerender: bool = False) -> list[str]:
+        """
+        Get the list representation of the rendered scene.
+        :param force_rerender: Force the scene to be re-rendered.
+        :return: The list representation of the rendered scene.
+        """
+        if force_rerender or self.__rendered is None:
+            self.render()
+        return self.__rendered.split('\n')
+
+
     def draw(self, x, y):
         """
         Draw the scene.
