@@ -1,13 +1,12 @@
-"""
-txt_label control provides an environment for displaying text
-"""
-
 from tui.controls.control import Control
 import textwrap
 from tui.controls.__border_tools import SingleBorders
 
 
 class TxtLabel(Control):
+    """
+    TxtLabel provides an environment for displaying text
+    """
     def __init__(self, width, height, x = 0, y = 0, z = 0, text = '', **kwargs):
         super().__init__(width, height, x, y, z)
 
