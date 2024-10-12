@@ -30,6 +30,16 @@ class Scene(object):
         self.on_scene_update = None
 
 
+    def add_control_at(self, control: Control, x: int, y: int):
+        """
+        Add a control at a specific position rather than its original position.
+        """
+        control.x_coord = x
+        control.y_coord = y
+        self.controls.append(control)
+        self.render()
+
+
     def play(self):
         """
         The method for starting the scene.
