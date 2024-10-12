@@ -36,7 +36,7 @@ class Scene(object):
         """
         return None # default scene output
 
-    def render(self):
+    def render(self, suppress_hook: bool = False):
         """
         Render the scene.
         """
@@ -59,18 +59,19 @@ class Scene(object):
         # convert temp canvas to string
         self.__rendered = '\n'.join([''.join(row) for row in temp])
 
-        if self.on_scene_update is not None:
+        if self.on_scene_update is not None and not suppress_hook:
             self.on_scene_update(self)
 
 
-    def get_rendered(self, force_rerender: bool = False) -> list[str]:
+    def get_rendered(self, force_rerender: bool = False, suppress_hook: bool = False) -> list[str]:
         """
         Get the list representation of the rendered scene.
         :param force_rerender: Force the scene to be re-rendered.
+        :param suppress_hook: Suppress the scene update hook.
         :return: The list representation of the rendered scene.
         """
         if force_rerender or self.__rendered is None:
-            self.render()
+            self.render(suppress_hook=suppress_hook)
         return self.__rendered.split('\n')
 
 
