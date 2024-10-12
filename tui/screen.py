@@ -26,7 +26,7 @@ class Screen(object):
             self.clear_screen()
             print(frame)
         self.__current_scene = new_scene
-        self.print_scene()
+        # self.print_scene()
 
 
     def print_scene(self, scene: Scene = None):
@@ -41,6 +41,13 @@ class Screen(object):
                 print(scene.draw(x, y), end='')
             print()
 
+
+    def play_scene(self):
+        """
+        Executes the play() method of the current scene and returns its output.
+        :return: Outputs of the play() method of the current scene.
+        """
+        return self.__current_scene.play()
 
     @staticmethod
     def clear_screen():
