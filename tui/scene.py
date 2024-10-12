@@ -1,4 +1,4 @@
-from tui import Control
+from tui.controls import Control
 
 
 class Scene(object):
