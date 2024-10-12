@@ -122,4 +122,4 @@ class TxtLabel(Control):
 
 
     def draw(self, x, y):
-        return self.__pre_rendered[x][y]
+        return self.__pre_rendered[y][x]
