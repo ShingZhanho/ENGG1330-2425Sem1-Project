@@ -40,7 +40,7 @@ Y88b.      888    888 888        888        888    888
       "888 888        888        888        888    888 
 Y88b  d88P 888        888        888        888  .d88P
  "Y8888P"  888        8888888888 8888888888 8888888P"  """)
-        lbl_slide = TxtLabel(56, 8, 0, 0, text="""  .d8888b.  888      8888888 8888888b.  8888888888
+        lbl_slide = TxtLabel(56, 8, 0, 0, text=""" .d8888b.  888      8888888 8888888b.  8888888888
 d88P  Y88b 888        888   888  "Y88b 888        
 Y88b.      888        888   888    888 888        
  "Y888b.   888        888   888    888 8888888    
@@ -52,7 +52,7 @@ Y88b  d88P 888        888   888  .d88P 888
         self.add_control_at(lbl_speed, - lbl_speed.width - 1, 5)
         self.add_control_at(lbl_slide, self.width, 15)
 
-        for i in range(-lbl_speed.width - 1, self.width + lbl_slide.width + 1):
+        for i in range(-lbl_speed.width - 1, self.width + lbl_slide.width + 1, 4):
             self.controls[0].x_coord = i
             self.controls[1].x_coord = self.width - i - lbl_slide.width
             self.render()
