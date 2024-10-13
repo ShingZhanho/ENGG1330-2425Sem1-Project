@@ -1,4 +1,5 @@
 from tui import Scene
+import tui.transitions as transitions
 import time
 import os
 
@@ -14,7 +15,7 @@ class Screen(object):
         self.__current_scene.render()
 
 
-    def transition_into_scene(self, new_scene: Scene, transition: callable, time_per_frame: float = 0.1):
+    def transition_into_scene(self, new_scene: Scene, transition: callable = transitions.direct, time_per_frame: float = 0.1):
         """
         Transition into a new scene.
         """
