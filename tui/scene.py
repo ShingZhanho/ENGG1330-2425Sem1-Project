@@ -94,14 +94,14 @@ class Scene(object):
         return self.__rendered.split('\n')[y][x]
 
 
-    def show_dialogue(self, dialogue: DialogueWindow, func: callable = lambda: input('>>> ')):
+    def show_dialogue(self, dialogue: DialogueWindow, func: callable):
         """
         Show a dialogue window. Ask for user input and return the result.
         """
         dialogue.z_coord = max(self.controls, key=lambda c: c.z_coord).z_coord + 1
         self.controls.append(dialogue)
         self.render()
-        result = func()
+        result = func(self)
         self.controls.remove(dialogue)
         self.render()
         return result

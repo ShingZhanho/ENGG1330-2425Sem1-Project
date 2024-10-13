@@ -6,12 +6,12 @@ class DialogueWindow(Control):
     """
     DialogueWindow is a pop-up window that displays customised controls and returns a value.
     """
-    def __init__(self, width, height, x=0, y=0, z=0, title='New Dialogue', controls = []):
+    def __init__(self, width, height, x=0, y=0, z=0, title='New Dialogue'):
         super().__init__(max(width, 8), height, x, y, z)
 
         self.__rendered: str = None
 
-        self.controls = controls
+        self.controls = []
         self.title = title
 
 
