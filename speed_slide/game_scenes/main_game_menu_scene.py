@@ -4,10 +4,10 @@ from tui.controls import *
 
 class MainGameMenu(Scene):
     def __init__(self, width, height):
-        super().__init__(width, height)
+        super().__init__(width, height, '*')
 
-        copyright_text = 'HKU ENGG1330 24/25 Semester 1 Group 1L3-3'
-        lbl_copyright = TxtLabel(110, 3, 0, 0, text=f'{copyright_text: ^110}',
+        copyright_text = '(C) 2024 HKU ENGG1330 Semester 1 Group 1L3-3. All rights reserved.'
+        lbl_copyright = TxtLabel(110, 3, 0, 27, text=f'{copyright_text: ^110}',
                                  padding_top=1, padding_bottom=1, padding_left=1, padding_right=1, draw_borders=True)
         self.controls.append(lbl_copyright)
 
@@ -15,7 +15,7 @@ class MainGameMenu(Scene):
 
 
     def play(self):
-        menu_dw = DialogueWindow(60, 20, 25, 5, title="SpeedSlide Game Menu")
+        menu_dw = DialogueWindow(60, 20, 25, 3, title="SpeedSlide Game Menu")
         menu_dw.controls.extend(
             [
                 # header
@@ -35,7 +35,7 @@ class MainGameMenu(Scene):
                     break
 
                 # show error message
-                invalid_option_dw = DialogueWindow(30, 10, 40, 8, title='ERROR!')
+                invalid_option_dw = DialogueWindow(30, 10, 40, 6, title='ERROR!')
                 invalid_option_dw.controls.append(
                     TxtLabel(28, 5, 1, 4, text=f'Option \"{user_option}\" is invalid! Please try again.',
                          padding_left = 2, padding_right = 2, auto_size=True)

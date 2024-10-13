@@ -10,7 +10,7 @@ class InitScene(Scene):
         # prepare controls
         self.controls.append(
             TxtLabel(50, 3, 30, 11,
-                     text='Initialising SpeedSlide ...',
+                     text=f'{"Initialising Game ...": ^40}',
                      padding_top=1, padding_bottom=1, padding_left=5, padding_right=5, draw_borders=True, auto_size=True)
         )
 
@@ -18,3 +18,5 @@ class InitScene(Scene):
     def play(self):
         self.render()
         time.sleep(2)
+
+

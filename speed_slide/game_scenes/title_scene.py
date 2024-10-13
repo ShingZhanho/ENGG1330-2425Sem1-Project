@@ -63,3 +63,11 @@ Y88b  d88P 888        888   888  .d88P 888
         self.render()
 
         time.sleep(2)
+
+        self.controls.append(
+            TxtLabel(110, 1, 0, 28,
+                     text=f'{"Proudly presented by ENGG1330-1L3 Group 3.":^110}')
+        )
+        self.render()
+
+        time.sleep(3)

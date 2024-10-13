@@ -4,8 +4,6 @@ import speed_slide.__game_consts as consts
 from speed_slide.game_scenes import *
 import random
 
-from tui.transitions import scatter
-
 
 def __random_transition():
     return random.choice((
@@ -23,8 +21,10 @@ def game():
     game_screen.transition_into_scene(InitScene(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT))
     game_screen.play_scene()
 
-    game_screen.transition_into_scene(TitleScene(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), transitions.scatter(200), 0.02)
+    game_screen.transition_into_scene(TitleScene(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), transitions.scatter(500), 0.02)
     game_screen.play_scene()
 
     game_screen.transition_into_scene(MainGameMenu(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), __random_transition(), 0.02)
     game_screen.play_scene()
+
+    game_screen.clear_screen()
