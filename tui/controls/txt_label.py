@@ -18,7 +18,7 @@ class TxtLabel(Control):
         self._padding_right = kwargs.get('padding_right', 0)
         self._padding_top = kwargs.get('padding_top', 0)
         self._padding_bottom = kwargs.get('padding_bottom', 0)
-        self.draw_borders = kwargs.get('draw_borders', False)
+        self._draw_borders = kwargs.get('draw_borders', False)
         self._text = text
         self._auto_size = kwargs.get('auto_size', False) # auto-resize label to fit all texts
 
@@ -37,18 +37,18 @@ class TxtLabel(Control):
 
     @property
     def draw_borders(self):
-        return self._draw_boarder
+        return self._draw_borders
 
     @draw_borders.setter
     def draw_borders(self, value):
         if self.padding_left == 0 or self.padding_right == 0 or self.padding_top == 0 or self.padding_bottom == 0:
-            if self._draw_boarder:
+            if self._draw_borders:
                 self.__is_content_modified = True
-            self._draw_boarder = False
+            self._draw_borders = False
         else:
-            if self._draw_boarder != value:
+            if self._draw_borders != value:
                 self.__is_content_modified = True
-            self._draw_boarder = value
+            self._draw_borders = value
 
 
     @property
