@@ -17,4 +17,4 @@ class Control():
         pass
 
     def draw(self, x, y) -> str:
-        return self._rendered[x][y]
+        return self._rendered[y][x]
