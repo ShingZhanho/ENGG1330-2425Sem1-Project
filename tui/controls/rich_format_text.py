@@ -1,4 +1,4 @@
-from tui import ForegroundColours as FColours, BackgroundColours as BColours, TextFormats as TFormats
+from tui.text_formats import ForegroundColours as FColours, BackgroundColours as BColours, TextFormats as TFormats
 
 
 class RichFormatText(object):
