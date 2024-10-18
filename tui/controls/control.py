@@ -12,7 +12,7 @@ class Control:
         self.z_coord = z_coord # determines the overlapping relationship between controls
 
         self._rendered = [' ' * self.width] * self.height
-        self._rft: RichFormatText | None = None
+        self._internal_rft: RichFormatText | None = None
 
     def render(self):
         # the base control class does not render anything
@@ -26,4 +26,4 @@ class Control:
         Gets the RichFormatText object that contains rendering information about the control.
         Meant to be used internally. The base class always returns None.
         """
-        return self._rft
+        return self._internal_rft

@@ -3,10 +3,13 @@ from tui import ForegroundColours as FColours, BackgroundColours as BColours, Te
 
 class RichFormatText(object):
     """
-    A class for providing support for coloured text and other effects.
+    A class for providing support for multi-line coloured text and other effects.
     """
 
     def __init__(self, text: str):
+        """
+        Creates a RichFormatText object. Line breaks are automatically converted to '\n', then handled automatically.
+        """
         # constants
         self.__DEFAULT_FORMAT = (FColours.DEFAULT, BColours.DEFAULT, TFormats.DEFAULT)
 
@@ -29,6 +32,14 @@ class RichFormatText(object):
             self.__format_options[index].extend(self.__DEFAULT_FORMAT for _ in range(len_diff + 1))
         elif len_diff < 0: # shorter than original text
             self.__format_options[index] = self.__format_options[index][:len_diff]
+
+    def append(self, text: str) -> 'RichFormatText':
+        """
+        Appends a line to the end.
+        """
+        self.__lines.append(text)
+        self.__format_options.append([self.__DEFAULT_FORMAT for _ in range(len(text))])
+        return self
 
     def set_format(self, line: int, format_range: slice,
                    foreground: int = FColours.DEFAULT,
