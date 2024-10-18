@@ -88,6 +88,9 @@ class RichFormatText(object):
         return self
 
     def render(self) -> list[str]:
+        """
+        Renders texts with ANSI control codes into list[str].
+        """
         output = []
         for i in range(len(self.__lines)):
             output_line = ''
