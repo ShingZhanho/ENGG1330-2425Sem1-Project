@@ -6,6 +6,7 @@ class _Constants:
 
     ### Sort items alphabetically ###
     DEBUG = False
+    DEBUG_TOOLS = None
     SCENE_TRANSITION_SECONDS_PER_FRAME = 0.02
     SCREEN_HEIGHT = 30
     SCREEN_WIDTH = 110
