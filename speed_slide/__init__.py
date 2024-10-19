@@ -1,7 +1,8 @@
-from tui import Screen
+from tui import Screen, RichFormatText
 import tui.transitions as transitions
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.game_scenes import *
+from speed_slide.__debug import DebugTools
 import random
 
 
@@ -55,6 +56,10 @@ def __about():
     __screen.play_scene()
 
 def main(**kwargs):
+    # configures debug tools
+    Constants.DEBUG_TOOLS = DebugTools()
+    Constants.DEBUG_TOOLS.debug_msg = RichFormatText(':-)') # test debug message
+
     __handle_launch_options(kwargs)
 
     __title()
