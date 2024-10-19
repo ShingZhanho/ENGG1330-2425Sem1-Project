@@ -113,4 +113,4 @@ def direct(_: Scene, to_scene: Scene) -> list[str]:
     :param to_scene: The new scene
     :return: all frames of the transition
     """
-    return [''.join(to_scene.get_rendered(suppress_hook=True))]
+    return ['\n'.join(to_scene.get_rendered(suppress_hook=True))]
