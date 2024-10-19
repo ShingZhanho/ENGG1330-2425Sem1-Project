@@ -86,11 +86,16 @@ class RichFormatText(object):
 
     def set_random_colours_to_all(self,
                                   random_foreground: bool = True,
+                                  except_foreground: list[int] | None = None,
                                   random_background: bool = False,
+                                  except_background: list[int] | None = None,
                                   avoid_colour_conflicts: bool = True) -> 'RichFormatText':
         """
         Sets random colours to all text.
         """
+        except_foreground = except_foreground if except_foreground is not None else []
+        except_background = except_background if except_background is not None else []
+
         for i in range(len(self.__lines)):
             for j in range(len(self.__lines[i])):
                 avoid_conflict = avoid_colour_conflicts
@@ -99,12 +104,14 @@ class RichFormatText(object):
                     avoid_conflict = False
 
                 new_fg, new_bg = original_fg, original_bg
-                if random_foreground:
+                while True and random_foreground:
                     new_fg = FColours.random()
+                    if new_fg not in except_foreground:
+                        break
 
                 while True and random_background:
                     new_bg = BColours.random()
-                    if avoid_conflict and new_bg != new_fg:
+                    if avoid_conflict and new_bg != new_fg and new_bg not in except_foreground:
                         break
 
                 self.__format_options[i][j] = (new_fg, new_bg, original_tf)

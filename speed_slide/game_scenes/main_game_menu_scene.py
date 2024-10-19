@@ -6,7 +6,7 @@ class MainGameMenu(Scene):
     def __init__(self, width, height):
         super().__init__(width, height, '*')
 
-        [self.background_rft.set_format(y, slice(width), ForegroundColours.GREEN) for y in range(height)]
+        self.background_rft.set_random_colours_to_all(except_foreground=[ForegroundColours.BLACK, ForegroundColours.WHITE])
 
         copyright_text = '(C) 2024 HKU ENGG1330 Semester 1 Group 1L3-3. All rights reserved.'
         lbl_copyright = TxtLabel('lbl_copyright', 110, 3, 0, 27, text=f'{copyright_text: ^110}',
