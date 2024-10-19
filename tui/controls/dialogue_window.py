@@ -48,7 +48,7 @@ class DialogueWindow(Control):
 
         # draw borders
         for i in range(1, self.height-1):
-            self._internal_rft[i] = DoubleBorders.LEFT_RIGHT + ' ' * (self.width - 2) + DoubleBorders.LEFT_RIGHT
+            self._internal_rft[i] = DoubleBorders.LEFT_RIGHT + self._internal_rft[i][1:-1] + DoubleBorders.LEFT_RIGHT
         self._internal_rft[-1] = DoubleBorders.LOWER_LEFT + DoubleBorders.UPPER_LOWER * (self.width - 2) + DoubleBorders.LOWER_RIGHT
 
         # applies formatting for borders
