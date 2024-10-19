@@ -73,6 +73,17 @@ class Scene(object):
             self.render(suppress_hook=suppress_hook)
         return self._internal_rft.render()
 
+    def get_rft(self, force_rerender: bool = False, suppress_hook: bool = False) -> RichFormatText:
+        """
+        Get the RichFormatText object of the rendered scene.
+        :param force_rerender: Force the scene to be re-rendered.
+        :param suppress_hook: Suppress the scene update hook.
+        :return: The RichFormatText object of the rendered scene.
+        """
+        if force_rerender or self._internal_rft is None:
+            self.render(suppress_hook=suppress_hook)
+        return self._internal_rft
+
     def show_dialogue(self, dialogue: DialogueWindow, func: callable):
         """
         Show a dialogue window. Ask for user input and return the result.

@@ -56,6 +56,14 @@ class RichFormatText(object):
             self.append(line)
         return self
 
+    def copy(self) -> 'RichFormatText':
+        """
+        Returns a copy of the current RichFormatText object.
+        """
+        rft = RichFormatText('\n'.join(self.__lines))
+        rft.__format_options = [line.copy() for line in self.__format_options]
+        return rft
+
     def set_format(self, line: int, format_range: slice,
                    foreground: int | None = None,
                    background: int | None = None,
