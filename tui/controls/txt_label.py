@@ -122,6 +122,9 @@ class TxtLabel(Control):
         return self.__formatted_text
 
     def __process_text(self):
+        # copy old formats
+        old_formats = self.__formatted_text
+
         # pre-process text for rendering
         max_length = self.width - self.padding_left - self.padding_right
         if self.auto_size:
@@ -139,6 +142,9 @@ class TxtLabel(Control):
             lines = self.__text.split('\n')
             for i in range(min(len(lines), max_lines)):
                 self.__formatted_text[i] = lines[i][:max_length]
+
+        # apply original formats
+        self.__formatted_text.copy_from(old_formats, 0, 0, copy_text=False)
 
     def render(self):
         # performance optimisation: only re-render if content is modified
