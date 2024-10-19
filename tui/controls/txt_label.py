@@ -150,10 +150,6 @@ class TxtLabel(Control):
         self.__formatted_text.copy_from(old_formats, 0, 0, copy_text=False)
 
     def render(self):
-        # performance optimisation: only re-render if content is modified
-        if self._internal_rft is not None and not self.__is_content_modified:
-            return
-
         self.__process_text()
         self._internal_rft = RichFormatText.create_by_size(self.width, self.height)
 
@@ -172,4 +168,5 @@ class TxtLabel(Control):
             (self._internal_rft.set_format(0, slice(0, self.width), self.border_colour)
              .set_format(self.height - 1, slice(0, self.width), self.border_colour))
             for i in range(1, self.height - 1):
-                self._internal_rft.set_format(i, slice(0, self.width), self.border_colour)
+                (self._internal_rft.set_format(i, slice(0, 1), self.border_colour)
+                 .set_format(i, slice(self.width - 1, self.width), self.border_colour))
