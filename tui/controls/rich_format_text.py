@@ -17,6 +17,13 @@ class RichFormatText(object):
         self.__format_options: list[list[tuple[int, int, int]]] = []
         self.clear_formats()
 
+    @classmethod
+    def create_by_size(cls, width: int, height: int) -> 'RichFormatText':
+        """
+        Creates a RichFormatText object with a blank canvas.
+        """
+        return RichFormatText('\n'.join([' ' * width for _ in range(height)]))
+
     def __len__(self) -> int:
         return len(self.__lines)
 
@@ -24,7 +31,7 @@ class RichFormatText(object):
         return self.__lines[index]
 
     def __setitem__(self, index: int, item: str):
-        self.__lines = item
+        self.__lines[index] = item
 
         # adjusts formatting options
         len_diff = len(item) - len(self.__format_options[index])
@@ -65,7 +72,7 @@ class RichFormatText(object):
         """
         Gets the formatting options of a specific line in a specific range.
         """
-        return self.__format_options[line][*get_range.indices(len(self.__format_options))]
+        return self.__format_options[line][get_range]
 
     def copy_from(self, other: 'RichFormatText', target_line: int = 0, target_index: int = 0,
                   copy_text = True, copy_formats = True) -> 'RichFormatText':

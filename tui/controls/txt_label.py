@@ -19,8 +19,8 @@ class TxtLabel(Control):
         self.__padding_right = kwargs.get('padding_right', 0)
         self.__padding_top = kwargs.get('padding_top', 0)
         self.__padding_bottom = kwargs.get('padding_bottom', 0)
-        self.__draw_borders = kwargs.get('draw_borders', FColours.DEFAULT)
-        self.__border_colour = kwargs.get('border_colour', )
+        self.__draw_borders = kwargs.get('draw_borders', False)
+        self.__border_colour = kwargs.get('border_colour', FColours.DEFAULT)
         self.__text = text
         self.__formatted_text = RichFormatText(text)
         self.__auto_size = kwargs.get('auto_size', False)  # auto-resize label to fit all texts
@@ -144,7 +144,7 @@ class TxtLabel(Control):
             return
 
         self.__process_text()
-        self._internal_rft = RichFormatText('\n' * (self.height - 1))
+        self._internal_rft = RichFormatText.create_by_size(self.width, self.height)
 
         # draw borders
         if self.draw_borders:
@@ -157,7 +157,8 @@ class TxtLabel(Control):
         self._internal_rft.copy_from(self.__formatted_text, self.padding_top, self.padding_left)
 
         # apply formatting for borders
-        (self._internal_rft.set_format(0, slice(0, self.width), self.border_colour)
-         .set_format(self.height - 1, slice(0, self.width), self.border_colour))
-        for i in range(1, self.height - 1):
-            self._internal_rft.set_format(i, slice(0, self.width), self.border_colour)
+        if self.draw_borders:
+            (self._internal_rft.set_format(0, slice(0, self.width), self.border_colour)
+             .set_format(self.height - 1, slice(0, self.width), self.border_colour))
+            for i in range(1, self.height - 1):
+                self._internal_rft.set_format(i, slice(0, self.width), self.border_colour)

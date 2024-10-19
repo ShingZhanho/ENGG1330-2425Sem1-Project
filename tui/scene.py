@@ -81,14 +81,6 @@ class Scene(object):
             self.render(suppress_hook=suppress_hook)
         return self._internal_rft.render()
 
-    def draw(self, x, y):
-        """
-        Draw the scene.
-        """
-        if self.__rendered is None:
-            raise Exception('Scene cannot be drawn before rendering.')
-        return self.__rendered.split('\n')[y][x]
-
     def show_dialogue(self, dialogue: DialogueWindow, func: callable):
         """
         Show a dialogue window. Ask for user input and return the result.

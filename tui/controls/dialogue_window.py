@@ -20,7 +20,7 @@ class DialogueWindow(Control):
         """
         Renders the dialogue window.
         """
-        self._internal_rft = RichFormatText('\n' * (self.height - 1))
+        self._internal_rft = RichFormatText.create_by_size(self.width, self.height)
         # always adjust width to be even
         if (self.width % 2) != 0:
             self.width += 1

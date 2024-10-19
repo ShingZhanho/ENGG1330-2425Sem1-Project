@@ -1,10 +1,10 @@
-from tui import Scene
+from tui import Scene, RichFormatText
 from tui.controls import *
 
 
 class MainGameMenu(Scene):
     def __init__(self, width, height):
-        super().__init__(width, height, '*')
+        super().__init__(width, height, RichFormatText('*'))
 
         copyright_text = '(C) 2024 HKU ENGG1330 Semester 1 Group 1L3-3. All rights reserved.'
         lbl_copyright = TxtLabel(110, 3, 0, 27, text=f'{copyright_text: ^110}',
