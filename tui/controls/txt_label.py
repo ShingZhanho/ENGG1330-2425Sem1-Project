@@ -115,7 +115,6 @@ class TxtLabel(Control):
         if self.__text == value:
             return
         self.__text = value
-        self.__process_text()
         self.__is_content_modified = True
 
     @property
@@ -127,16 +126,19 @@ class TxtLabel(Control):
         max_length = self.width - self.padding_left - self.padding_right
         if self.auto_size:
             # wraps text
+            wrapped_lines = []
             for line in self.__text.split('\n'):
                 if line == '':
                     line = ' '  # preserve empty lines
-                self.__formatted_text = RichFormatText('\n'.join(textwrap.wrap(line, max_length, drop_whitespace=False)))
-            self.height = len(self.__formatted_text) + self.padding_top + self.padding_bottom
+                wrapped_lines.extend(textwrap.wrap(line, max_length, drop_whitespace=False))
+            self.height = len(wrapped_lines) + self.padding_top + self.padding_bottom
+            self.__formatted_text = RichFormatText('\n'.join(wrapped_lines))
         else:
             max_lines = self.height - self.padding_top - self.padding_bottom
+            self.__formatted_text = RichFormatText.create_by_size(max_length, max_lines)
             lines = self.__text.split('\n')
             for i in range(min(len(lines), max_lines)):
-                self.__formatted_text.append(lines[i][:max_length])
+                self.__formatted_text[i] = lines[i][:max_length]
 
     def render(self):
         # performance optimisation: only re-render if content is modified

@@ -48,6 +48,14 @@ class RichFormatText(object):
         self.__format_options.append([self.__DEFAULT_FORMAT for _ in range(len(text))])
         return self
 
+    def extend(self, lines: list[str]) -> 'RichFormatText':
+        """
+        Extends the text by appending multiple lines.
+        """
+        for line in lines:
+            self.append(line)
+        return self
+
     def set_format(self, line: int, format_range: slice,
                    foreground: int = FColours.DEFAULT,
                    background: int = BColours.DEFAULT,
@@ -91,17 +99,20 @@ class RichFormatText(object):
         if target_line >= len(self.__lines):
             return self
 
-        for y in range(target_line, min(len(self.__lines), target_line + len(other))):
-            line_of_other = y - target_line
-            len_to_copy = min(len(other[line_of_other]), len(self.__lines[y]) - target_index)
+        starting_line = max(0, target_line)
+        starting_index = max(0, target_index)
+
+        for y in range(starting_line, min(len(self.__lines), starting_line + len(other))):
+            line_of_other = y - starting_line
+            len_to_copy = min(len(other[line_of_other]), len(self.__lines[y]) - starting_index)
             if copy_text:
-                self.__lines[y] = (self.__lines[y][:target_index]
+                self.__lines[y] = (self.__lines[y][:starting_index]
                                    + other[line_of_other][:len_to_copy]
-                                   + self.__lines[y][target_index + len_to_copy:])
+                                   + self.__lines[y][starting_index + len_to_copy:])
             if copy_formats:
-                self.__format_options[y] = (self.__format_options[y][:target_index]
+                self.__format_options[y] = (self.__format_options[y][:starting_index]
                                             + other.get_format(line_of_other, slice(0, len_to_copy, 1))
-                                            + self.__format_options[y][target_index + len_to_copy:])
+                                            + self.__format_options[y][starting_index + len_to_copy:])
 
         return self
 
