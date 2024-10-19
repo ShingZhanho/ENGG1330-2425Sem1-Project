@@ -32,8 +32,11 @@ def __random_transition():
     ))
 
 def __handle_launch_options(args: dict[str, str]):
+    # debug mode
+    Constants.DEBUG = __get_arg(args, ['--debug'], bool, False)
+
     # graphics options
-    match __get_arg(args, ['graphics-mode', 'g'], str, 'normal'):
+    match __get_arg(args, ['--graphics-mode', '-g'], str, 'normal'):
         case 'normal':
             pass
         case 'performant':
@@ -47,6 +50,10 @@ def __title():
     __screen.transition_into_scene(TitleScene(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), time_per_frame=Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
     __screen.play_scene()
 
+def __about():
+    __screen.transition_into_scene(AboutScene(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), transitions.scatter(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+    __screen.play_scene()
+
 def main(**kwargs):
     __handle_launch_options(kwargs)
 
@@ -57,5 +64,7 @@ def main(**kwargs):
 
         if user_option == 'Q':
             break
+        elif user_option == 'A':
+            __about()
 
     __screen.clear_screen()
