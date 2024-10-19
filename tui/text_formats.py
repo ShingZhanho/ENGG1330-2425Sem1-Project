@@ -48,3 +48,4 @@ class TextFormats:
     BOLD = 1
     ITALIC = 3
     UNDERLINE = 4
+    UNDERLINE_AND_BOLD = '1;4' # experimental

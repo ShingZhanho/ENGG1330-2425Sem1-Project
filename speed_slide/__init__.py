@@ -15,7 +15,7 @@ def __get_arg(args: dict[str, str], keys: list[str], value_type: type, default_v
     """
     value = None
     for key in keys:
-        value = args.get(key, value if value is not None else default_value)
+        value = args.get(key, value if value is not None else str(default_value))
 
     # handle boolean:
     if value_type == bool:
@@ -62,7 +62,8 @@ def main(**kwargs):
 
     __handle_launch_options(kwargs)
 
-    __title()
+    if not __get_arg(kwargs, ['--skip-title'], bool, False):
+        __title()
 
     while True:
         user_option = __menu() # validity is ensured within MainGameMenu scene
