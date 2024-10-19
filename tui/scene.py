@@ -3,13 +3,12 @@ from tui.controls import DialogueWindow
 from tui.controls.rich_format_text import RichFormatText
 
 
-class Scene(object):
+class Scene:
     """
     The basic class for a scene.
     """
 
     def __init__(self, width: int, height: int, background: str = ' '):
-        self.__rendered = None
         self._internal_rft: RichFormatText | None = None
 
         self.background = background

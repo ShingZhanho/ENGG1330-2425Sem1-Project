@@ -8,8 +8,8 @@ class DialogueWindow(Control):
     """
     DialogueWindow is a pop-up window that displays customised controls and returns a value.
     """
-    def __init__(self, width, height, x=0, y=0, z=0, title='New Dialogue', **kwargs):
-        super().__init__(max(width, 8), height, x, y, z)
+    def __init__(self, control_name, width, height, x=0, y=0, z=0, title='New Dialogue', **kwargs):
+        super().__init__(control_name, max(width, 8), height, x, y, z)
 
         self.controls = []
         self.title = title
@@ -58,6 +58,14 @@ class DialogueWindow(Control):
             (self._internal_rft.set_format(i, slice(1), foreground=self.border_colour)
              .set_format(i, slice(-1, self.width), foreground=self.border_colour))
 
+    def get_control(self, control_id: str) -> Control:
+        """
+        Gets the control with the specified control_id.
+        """
+        for control in self.controls:
+            if control.control_id == control_id:
+                return control
+        raise ValueError(f'\'{self.control_id}\' does not contain a child control \'{control_id}\'.')
 
     def show(self, func):
         """

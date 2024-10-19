@@ -10,8 +10,8 @@ class TxtLabel(Control):
     TxtLabel provides an environment for displaying text
     """
 
-    def __init__(self, width, height, x=0, y=0, z=0, text='', **kwargs):
-        super().__init__(width, height, x, y, z)
+    def __init__(self, control_name, width, height, x=0, y=0, z=0, text='', **kwargs):
+        super().__init__(control_name, width, height, x, y, z)
 
         self.__is_content_modified = True
 

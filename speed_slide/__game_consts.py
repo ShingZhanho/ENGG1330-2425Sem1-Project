@@ -1,6 +1,10 @@
-"""
-This file contains global constants for the game.
-"""
+class _Constants:
+    """
+    Internally used "constants" for the game. Values may be changed at runtime by command line arguments.
+    Does not guarantee immutability.
+    """
 
-__SCREEN_WIDTH = 110
-__SCREEN_HEIGHT = 30
+    ### Sort items alphabetically ###
+    SCENE_TRANSITION_SECONDS_PER_FRAME = 0.02
+    SCREEN_HEIGHT = 30
+    SCREEN_WIDTH = 110
