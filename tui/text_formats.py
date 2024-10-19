@@ -23,6 +23,7 @@ class BackgroundColours:
     """
     Enum shortcuts for ANSI background colour codes.
     """
+    TRANSPARENT = -1
     BLACK = 40
     RED = 41
     GREEN = 42

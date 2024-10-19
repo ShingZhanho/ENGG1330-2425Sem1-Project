@@ -8,25 +8,16 @@ class Scene(object):
     The basic class for a scene.
     """
 
-    def __init__(self, width: int, height: int, background: RichFormatText = RichFormatText(' '),
-                 background_tile_offset: int = 0):
+    def __init__(self, width: int, height: int, background: str = ' '):
         self.__rendered = None
         self._internal_rft: RichFormatText | None = None
 
         self.background = background
-        self.background_tile_offset = background_tile_offset
+        self.background_rft = RichFormatText.create_by_size(width, height, background)
         self.controls: list[Control] = []  # list of controls in the scene
         self.width = width
         self.height = height
         self.on_scene_update: callable = None
-
-    def __get_tiled_background(self) -> RichFormatText:
-        tile_pattern_len = len(self.background[0])
-        canvas = RichFormatText((self.background[0] * (self.width // tile_pattern_len + 1))[:self.width])
-        for y in range(1, self.height):
-            offset = y * self.background_tile_offset % tile_pattern_len
-            canvas.append((self.background[0][offset:] + self.background[0] * (self.width // tile_pattern_len))[:self.width])
-        return canvas
 
     def register_scene_update_hook(self, func: callable):
         """
@@ -59,7 +50,8 @@ class Scene(object):
         """
         Render the scene.
         """
-        self._internal_rft = self.__get_tiled_background()
+        self._internal_rft = RichFormatText.create_by_size(self.width, self.height, self.background)
+        self._internal_rft.copy_from(self.background_rft)
 
         # sort controls by z-index, lowest first, then by y-coordinate, and then by x-coordinate
         self.controls.sort(key=lambda c: (c.z_coord, c.y_coord, c.x_coord))

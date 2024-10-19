@@ -22,8 +22,10 @@ class TxtLabel(Control):
         self.__draw_borders = kwargs.get('draw_borders', False)
         self.__border_colour = kwargs.get('border_colour', FColours.DEFAULT)
         self.__text = text
-        self.__formatted_text = RichFormatText(text)
         self.__auto_size = kwargs.get('auto_size', False)  # auto-resize label to fit all texts
+        self.__formatted_text = RichFormatText(text)
+
+        self.__process_text()
 
     @property
     def auto_size(self):
@@ -115,6 +117,7 @@ class TxtLabel(Control):
         if self.__text == value:
             return
         self.__text = value
+        self.__process_text()
         self.__is_content_modified = True
 
     @property

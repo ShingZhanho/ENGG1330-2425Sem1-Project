@@ -11,18 +11,18 @@ class RichFormatText(object):
         Creates a RichFormatText object. Line breaks are automatically converted to '\n', then handled automatically.
         """
         # constants
-        self.__DEFAULT_FORMAT = (FColours.DEFAULT, BColours.DEFAULT, TFormats.DEFAULT)
+        self.__DEFAULT_FORMAT = (FColours.DEFAULT, BColours.TRANSPARENT, TFormats.DEFAULT)
 
         self.__lines: list[str] = text.replace('\r\n', '\n').split('\n')
         self.__format_options: list[list[tuple[int, int, int]]] = []
         self.clear_formats()
 
     @classmethod
-    def create_by_size(cls, width: int, height: int) -> 'RichFormatText':
+    def create_by_size(cls, width: int, height: int, char: str = ' ') -> 'RichFormatText':
         """
         Creates a RichFormatText object with a blank canvas.
         """
-        return RichFormatText('\n'.join([' ' * width for _ in range(height)]))
+        return RichFormatText('\n'.join([char * width for _ in range(height)]))
 
     def __len__(self) -> int:
         return len(self.__lines)
@@ -57,13 +57,19 @@ class RichFormatText(object):
         return self
 
     def set_format(self, line: int, format_range: slice,
-                   foreground: int = FColours.DEFAULT,
-                   background: int = BColours.DEFAULT,
-                   text_format: int = TFormats.DEFAULT) -> 'RichFormatText':
+                   foreground: int | None = None,
+                   background: int | None = None,
+                   text_format: int | None = None) -> 'RichFormatText':
         """
         Sets the format options for a given range of text.
         """
+
         for i in range(*format_range.indices(len(self.__format_options[line]))):
+            # keep original format if not specified
+            foreground = self.__format_options[line][i][0] if foreground is None else foreground
+            background = self.__format_options[line][i][1] if background is None else background
+            text_format = self.__format_options[line][i][2] if text_format is None else text_format
+
             self.__format_options[line][i] = (foreground, background, text_format)
         return self
 
@@ -133,9 +139,11 @@ class RichFormatText(object):
             if copy_text:
                 self[y] = self[y][:start_index] + other[y - target_line][start_index - target_index:end_index - target_index] + self[y][end_index:]
             if copy_formats:
-                self.__format_options[y] = (self.__format_options[y][:start_index]
-                                            + other.__format_options[y - target_line][start_index - target_index:end_index - target_index]
-                                            + self.__format_options[y][end_index:])
+                for x in r:
+                    fg, bg, tf = other.__format_options[y - target_line][x - target_index]
+                    if bg == BColours.TRANSPARENT: # handle transparent background
+                        bg = self.__format_options[y][x][1]
+                    self.set_format(y, slice(x, x + 1), fg, bg, tf)
 
         return self
 
@@ -148,6 +156,8 @@ class RichFormatText(object):
             output_line = ''
             for index, (char, option) in enumerate(list(zip(self.__lines[i], self.__format_options[i]))):
                 fg, bg, tf = option
+                if bg == BColours.TRANSPARENT:
+                    bg = BColours.DEFAULT
                 if index > 0 and self.__format_options[i][index - 1] == option:
                     output_line += char
                 else:
