@@ -82,25 +82,26 @@ def scatter(chars_per_frame: int = 100) -> callable:
     :return: The constructed scatter transition generator.
     """
     def inner_scatter(from_scene: Scene, to_scene: Scene) -> list[str]:
-        from_scene_rendered, to_scene_rendered = __get_rendered_tuple(from_scene, to_scene)
-        frames = [from_scene_rendered.copy()]
+        from_scene_rft, to_scene_rft = from_scene.get_rft(suppress_hook=True), to_scene.get_rft(suppress_hook=True)
         __ensure_same_size(from_scene, to_scene)
-        # flattens to_scene_rendered into 1-D list
-        to_scene_rendered = [item for line in to_scene_rendered for item in line]
 
-        indices = set(range(len(to_scene_rendered)))
-        for f in range(len(to_scene_rendered) // chars_per_frame + 1):
-            frame = frames[f].copy()
+        rft_frames = [from_scene_rft]
+
+        indices = set(range(to_scene.height * to_scene.width))
+        for f in range(to_scene.height * to_scene.width // chars_per_frame + 1):
+            rft_frame = rft_frames[f].copy()
+
             chosen_indices = random.sample(sorted(indices), min(chars_per_frame, len(indices)))
             indices -= set(chosen_indices)
             for i in chosen_indices:
                 x, y = i % to_scene.width, i // to_scene.width
-                frame[y] = frame[y][:x] + to_scene_rendered[i] + frame[y][x+1:]
-            frames.append(frame)
+                rft_frame[y] = rft_frame[y][:x] + to_scene_rft[y][x] + rft_frame[y][x+1:]
+                fg, bg, tf = to_scene_rft.get_format(y, slice(x, x+1))[0]
+                rft_frame.set_format(y, slice(x, x+1), fg, bg, tf)
+            rft_frames.append(rft_frame)
 
-        del frames[0]
-        frames = ['\n'.join(frame) for frame in frames]
-        return frames
+        del rft_frames[0]
+        return ['\n'.join(rft.render()) for rft in rft_frames]
 
 
     return inner_scatter
@@ -113,4 +114,4 @@ def direct(_: Scene, to_scene: Scene) -> list[str]:
     :param to_scene: The new scene
     :return: all frames of the transition
     """
-    return [''.join(to_scene.get_rendered(suppress_hook=True))]
+    return ['\n'.join(to_scene.get_rendered(suppress_hook=True))]

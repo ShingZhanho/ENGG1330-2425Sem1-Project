@@ -9,7 +9,7 @@ class Screen(object):
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        self.__blank_scene = Scene(screen_width, screen_height, ' ')
+        self.__blank_scene = Scene(screen_width, screen_height)
         self.__current_scene = self.__blank_scene
         self.__current_scene.register_scene_update_hook(self.print_scene)
         self.__current_scene.render()
@@ -29,7 +29,6 @@ class Screen(object):
             self.clear_screen()
             print(frame)
         self.__current_scene = new_scene
-        # self.print_scene()
 
 
     def print_scene(self, scene: Scene = None):
@@ -39,10 +38,9 @@ class Screen(object):
         if scene is None:
             scene = self.__current_scene
         self.clear_screen()
-        for y in range(scene.height):
-            for x in range(scene.width):
-                print(scene.draw(x, y), end='')
-            print()
+        rendered = scene.get_rendered(suppress_hook=False)
+        for line in rendered:
+            print(line)
 
 
     def play_scene(self):

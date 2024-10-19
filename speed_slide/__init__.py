@@ -18,13 +18,10 @@ def __random_transition():
 def game():
     game_screen = Screen(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT)
 
-    game_screen.transition_into_scene(InitScene(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT))
+    game_screen.transition_into_scene(TitleScene(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), __random_transition(), 0.02)
     game_screen.play_scene()
 
-    game_screen.transition_into_scene(TitleScene(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), transitions.scatter(500), 0.02)
-    game_screen.play_scene()
-
-    game_screen.transition_into_scene(MainGameMenu(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), __random_transition(), 0.02)
+    game_screen.transition_into_scene(MainGameMenu(consts.__SCREEN_WIDTH, consts.__SCREEN_HEIGHT), transitions.scatter(200), 0.02)
     game_screen.play_scene()
 
     game_screen.clear_screen()
