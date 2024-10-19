@@ -1,4 +1,4 @@
-from tui import Scene, RichFormatText
+from tui import Scene, RichFormatText, ForegroundColours
 from tui.controls import TxtLabel
 import time
 
@@ -54,11 +54,11 @@ Y88b  d88P 888        888   888  .d88P 888
         self.add_control_at(lbl_speed, - lbl_speed.width - 1, 5)
         self.add_control_at(lbl_slide, self.width, 15)
 
-        for i in range(-lbl_speed.width - 1, self.width + lbl_slide.width + 1, 4):
+        for i in range(-lbl_speed.width - 1, self.width + lbl_slide.width + 1, 10):
             self.controls[0].x_coord = i
             self.controls[1].x_coord = self.width - i - lbl_slide.width
             self.render()
-            time.sleep(0.01)
+            time.sleep(0.05)
 
         self.controls[0].x_coord = 27 # place at center
         self.controls[1].x_coord = 29
@@ -66,10 +66,9 @@ Y88b  d88P 888        888   888  .d88P 888
 
         time.sleep(2)
 
-        self.controls.append(
-            TxtLabel(110, 1, 0, 28,
-                     text=f'{"Proudly presented by ENGG1330-1L3 Group 3.":^110}')
-        )
+        lbl_credits = TxtLabel(110, 1, 0, 28, text=f'{"Proudly presented by ENGG1330-1L3 Group 3.":^110}')
+        lbl_credits.formatted_text.set_format(0, slice(110), ForegroundColours.YELLOW)
+        self.controls.append(lbl_credits)
         self.render()
 
         time.sleep(3)

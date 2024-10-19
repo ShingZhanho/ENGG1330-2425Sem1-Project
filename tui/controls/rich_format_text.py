@@ -40,6 +40,9 @@ class RichFormatText(object):
         elif len_diff < 0: # shorter than original text
             self.__format_options[index] = self.__format_options[index][:len_diff]
 
+    def __str__(self) -> str:
+        return '\n'.join(self.render())
+
     def append(self, text: str) -> 'RichFormatText':
         """
         Appends a line to the end.
