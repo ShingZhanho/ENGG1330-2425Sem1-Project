@@ -23,7 +23,7 @@ class Scene(object):
     def __get_tiled_background(self) -> RichFormatText:
         tile_pattern_len = len(self.background[0])
         canvas = RichFormatText((self.background[0] * (self.width // tile_pattern_len + 1))[:self.width])
-        for y in range(self.height):
+        for y in range(1, self.height):
             offset = y * self.background_tile_offset % tile_pattern_len
             canvas.append((self.background[0][offset:] + self.background[0] * (self.width // tile_pattern_len))[:self.width])
         return canvas

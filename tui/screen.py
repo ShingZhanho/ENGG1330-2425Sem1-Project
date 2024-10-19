@@ -38,7 +38,7 @@ class Screen(object):
         if scene is None:
             scene = self.__current_scene
         self.clear_screen()
-        rendered = scene.get_rendered(suppress_hook=True)
+        rendered = scene.get_rendered(suppress_hook=False)
         for line in rendered:
             print(line)
 

@@ -99,20 +99,17 @@ class RichFormatText(object):
         if target_line >= len(self.__lines):
             return self
 
-        starting_line = max(0, target_line)
-        starting_index = max(0, target_index)
-
-        for y in range(starting_line, min(len(self.__lines), starting_line + len(other))):
-            line_of_other = y - starting_line
-            len_to_copy = min(len(other[line_of_other]), len(self.__lines[y]) - starting_index)
+        for y in range(max(0, target_line), min(len(self), target_line + len(other))):
+            r = range(max(0, target_index), min(len(self[y]), target_index + len(other[y - target_line])))
+            if len(r) == 0:
+                continue
+            start_index, end_index = r.start, r.stop
             if copy_text:
-                self.__lines[y] = (self.__lines[y][:starting_index]
-                                   + other[line_of_other][:len_to_copy]
-                                   + self.__lines[y][starting_index + len_to_copy:])
+                self[y] = self[y][:start_index] + other[y - target_line][start_index - target_index:end_index - target_index] + self[y][end_index:]
             if copy_formats:
-                self.__format_options[y] = (self.__format_options[y][:starting_index]
-                                            + other.get_format(line_of_other, slice(0, len_to_copy, 1))
-                                            + self.__format_options[y][starting_index + len_to_copy:])
+                self.__format_options[y] = (self.__format_options[y][:start_index]
+                                            + other.__format_options[y - target_line][start_index - target_index:end_index - target_index]
+                                            + self.__format_options[y][end_index:])
 
         return self
 
