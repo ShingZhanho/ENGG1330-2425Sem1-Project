@@ -1,21 +1,25 @@
-from tui import Scene, RichFormatText
+from tui import Scene, RichFormatText, ForegroundColours, BackgroundColours
 from tui.controls import *
 
 
 class MainGameMenu(Scene):
     def __init__(self, width, height):
-        super().__init__(width, height, RichFormatText('*'))
+        super().__init__(width, height, '*')
+
+        [self.background_rft.set_format(y, slice(width), ForegroundColours.CYAN, BackgroundColours.BLACK) for y in range(height)]
 
         copyright_text = '(C) 2024 HKU ENGG1330 Semester 1 Group 1L3-3. All rights reserved.'
         lbl_copyright = TxtLabel(110, 3, 0, 27, text=f'{copyright_text: ^110}',
-                                 padding_top=1, padding_bottom=1, padding_left=1, padding_right=1, draw_borders=True)
+                                 padding_top=1, padding_bottom=1, padding_left=1, padding_right=1, draw_borders=True,
+                                 border_colour=ForegroundColours.GREEN)
+        lbl_copyright.formatted_text.set_format(0, slice(len(copyright_text), ForegroundColours.GREEN))
         self.controls.append(lbl_copyright)
 
         self.render()
 
 
     def play(self):
-        menu_dw = DialogueWindow(60, 20, 25, 3, title="SpeedSlide Game Menu")
+        menu_dw = DialogueWindow(60, 20, 25, 3, title="SpeedSlide Game Menu", border_colour=ForegroundColours.GREEN)
         menu_dw.controls.extend(
             [
                 # header
@@ -35,11 +39,11 @@ class MainGameMenu(Scene):
                     break
 
                 # show error message
-                invalid_option_dw = DialogueWindow(30, 10, 40, 6, title='ERROR!')
-                invalid_option_dw.controls.append(
-                    TxtLabel(28, 5, 1, 4, text=f'Option \"{user_option}\" is invalid! Please try again.',
+                invalid_option_dw = DialogueWindow(30, 10, 40, 6, title='ERROR!', border_colour=ForegroundColours.RED)
+                lbl = TxtLabel(28, 5, 1, 4, text=f'Option \"{user_option}\" is invalid! Please try again.',
                          padding_left = 2, padding_right = 2, auto_size=True)
-                )
+                [lbl.formatted_text.set_format(y, slice(lbl.width), ForegroundColours.RED) for y in range(len(lbl.formatted_text))]
+                invalid_option_dw.controls.append(lbl)
                 scene.show_dialogue(invalid_option_dw, lambda _: input('Press any key to continue...'))
 
             return user_option
