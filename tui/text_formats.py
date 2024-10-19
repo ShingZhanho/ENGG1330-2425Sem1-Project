@@ -1,3 +1,5 @@
+import random
+
 class ForegroundColours:
     """
     Enum shortcuts for ANSI foreground colour codes.
@@ -11,6 +13,10 @@ class ForegroundColours:
     CYAN = 36
     WHITE = 37
     DEFAULT = 39
+
+    @classmethod
+    def random(cls):
+        return random.randint(30, 37)
 
 
 class BackgroundColours:
@@ -26,6 +32,10 @@ class BackgroundColours:
     CYAN = 46
     WHITE = 47
     DEFAULT = 49
+
+    @classmethod
+    def random(cls):
+        return random.randint(40, 47)
 
 
 class TextFormats:
