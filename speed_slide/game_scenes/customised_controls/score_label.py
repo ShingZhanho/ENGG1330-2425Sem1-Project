@@ -6,7 +6,7 @@ from speed_slide.__game_consts import _Constants as Constants
 
 class ScoreLabel(Control):
     """
-    A label for displaying scores up to 10 digits.
+    A label for displaying scores up to 10 digits of positive scores and 9 digits of negative scores.
     """
 
     def __init__(self,
@@ -23,6 +23,7 @@ class ScoreLabel(Control):
 
         self.__score = score
         self.__internal_txt_label: TxtLabel = TxtLabel(f'{control_id}__internal_txt_label', 10, 1, 0, 0, 0, text='0' * 10)
+        self.__render()
 
     def animate_change_score(self, new_score: int, step: int = 0, screen_painter: callable = None):
         """
@@ -58,7 +59,10 @@ class ScoreLabel(Control):
         Internal renderer.
         """
         # changes score
-        self.__internal_txt_label.text = f'{self.__score:0>10}'
+        if self.__score >= 0:
+            self.__internal_txt_label.text = f'{self.__score:0>10}'
+        else:
+            self.__internal_txt_label.text = f'-{-self.__score:0>9}'
 
         # changes colour
         (self.__internal_txt_label.formatted_text
