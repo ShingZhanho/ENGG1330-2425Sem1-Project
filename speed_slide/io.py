@@ -21,7 +21,7 @@ def safe_input(prompt: RichFormatText = RichFormatText('>>> ')):
 
         (new_prompt.append(prompt[0])
               .set_format(0, slice(len(debug_prompt_phrase)), ForegroundColours.YELLOW, BackgroundColours.RED, TextFormats.BOLD)
-              .copy_from(prompt, -1, 0, copy_text=False))
+              .copy_from(prompt, len(new_prompt) - 1, 0, copy_text=False))
 
     print(new_prompt, end='', flush=True)
     user_in = input()

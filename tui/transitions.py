@@ -115,3 +115,16 @@ def direct(_: Scene, to_scene: Scene) -> list[str]:
     :return: all frames of the transition
     """
     return ['\n'.join(to_scene.get_rendered(suppress_hook=True))]
+
+def get_random(scatter_cpf: int = 100) -> callable:
+    """
+    Gets a random transition generator function.
+    :param scatter_cpf: Number of characters to scatter per frame if scatter transition is chosen.
+    """
+    return random.choice((
+        scatter(scatter_cpf),
+        wipe_up_to_down,
+        wipe_down_to_up,
+        slide_from_top,
+        slide_from_bottom,
+    ))

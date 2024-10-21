@@ -23,15 +23,6 @@ def __get_arg(args: dict[str, str], keys: list[str], value_type: type, default_v
 
     return value_type(value)
 
-def __random_transition():
-    return random.choice((
-        transitions.scatter(200),
-        transitions.wipe_up_to_down,
-        transitions.wipe_down_to_up,
-        transitions.slide_from_top,
-        transitions.slide_from_bottom,
-    ))
-
 def __handle_launch_options(args: dict[str, str]):
     # debug mode
     Constants.DEBUG = __get_arg(args, ['--debug'], bool, False)
@@ -44,7 +35,7 @@ def __handle_launch_options(args: dict[str, str]):
             Constants.SCENE_TRANSITION_SECONDS_PER_FRAME = 0.06
 
 def __menu():
-    __screen.transition_into_scene(MainGameMenu(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), __random_transition(), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+    __screen.transition_into_scene(MainGameMenu(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), transitions.get_random(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
     return __screen.play_scene()
 
 def __title():
@@ -58,7 +49,6 @@ def __about():
 def main(**kwargs):
     # configures debug tools
     Constants.DEBUG_TOOLS = DebugTools()
-    Constants.DEBUG_TOOLS.debug_msg = RichFormatText(':-)') # test debug message
 
     __handle_launch_options(kwargs)
 
