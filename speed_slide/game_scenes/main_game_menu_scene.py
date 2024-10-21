@@ -1,10 +1,11 @@
 from tui import *
 from tui.controls import *
 from speed_slide.io import safe_input
+from speed_slide.__game_consts import _Constants as Contants
 
-class MainGameMenu(Scene):
-    def __init__(self, width, height):
-        super().__init__(width, height, '*')
+class MainGameMenuScene(Scene):
+    def __init__(self):
+        super().__init__(Contants.SCREEN_WIDTH, Contants.SCREEN_HEIGHT, '*')
 
         self.background_rft.set_random_colours_to_all(except_foreground=[ForegroundColours.BLACK, ForegroundColours.WHITE])
 

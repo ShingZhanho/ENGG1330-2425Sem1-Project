@@ -5,8 +5,8 @@ import time
 
 
 class TitleScene(Scene):
-    def __init__(self, width, height):
-        super().__init__(width, height)
+    def __init__(self):
+        super().__init__(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT)
 
     def play(self):
         except_colours = [ForegroundColours.BLACK, ForegroundColours.WHITE]

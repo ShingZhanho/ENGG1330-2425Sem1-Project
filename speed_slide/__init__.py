@@ -3,7 +3,6 @@ import tui.transitions as transitions
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.game_scenes import *
 from speed_slide.__debug import DebugTools
-import random
 
 
 __screen = Screen(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT)
@@ -35,16 +34,21 @@ def __handle_launch_options(args: dict[str, str]):
             Constants.SCENE_TRANSITION_SECONDS_PER_FRAME = 0.06
 
 def __menu():
-    __screen.transition_into_scene(MainGameMenu(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), transitions.get_random(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+    __screen.transition_into_scene(MainGameMenuScene(), transitions.get_random(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
     return __screen.play_scene()
 
 def __title():
-    __screen.transition_into_scene(TitleScene(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), time_per_frame=Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+    __screen.transition_into_scene(TitleScene(), time_per_frame=Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
     __screen.play_scene()
 
 def __about():
-    __screen.transition_into_scene(AboutScene(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT), transitions.scatter(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+    __screen.transition_into_scene(AboutScene(), transitions.scatter(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
     __screen.play_scene()
+
+def __start_new_game():
+    difficulty = 3
+    attempt = 1
+    total_score = 0
 
 def main(**kwargs):
     # configures debug tools
@@ -60,6 +64,8 @@ def main(**kwargs):
 
         if user_option == 'Q':
             break
+        elif user_option == 'N':
+            __start_new_game()
         elif user_option == 'A':
             __about()
 

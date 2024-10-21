@@ -6,8 +6,8 @@ from speed_slide.__game_consts import _Constants as Constants
 
 
 class AboutScene(Scene):
-    def __init__(self, width, height):
-        super().__init__(width, height, ' ')
+    def __init__(self):
+        super().__init__(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, ' ')
 
         [self.background_rft.set_format(y, slice(width)) for y in range(height)]
 

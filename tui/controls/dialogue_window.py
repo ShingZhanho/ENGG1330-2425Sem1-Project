@@ -36,11 +36,12 @@ class DialogueWindow(Control):
         # handles title
         max_title_len = self.width - 6
         temp_title = self.title
-        if len(self.title) > max_title_len:
-            temp_title = self.title[:max_title_len-3] + '...' # truncate long title
-        if (len(temp_title) % 2) != 0: # adjust title to be even
-            temp_title += ' '
-        temp_title = f'[{temp_title:^{len(temp_title)}}]'
+        if len(temp_title) > 0:
+            if len(self.title) > max_title_len:
+                temp_title = self.title[:max_title_len-3] + '...' # truncate long title
+            if (len(temp_title) % 2) != 0: # adjust title to be even
+                temp_title += ' '
+            temp_title = f'[{temp_title:^{len(temp_title)}}]'
 
         self._internal_rft[0] = (DoubleBorders.UPPER_LEFT + DoubleBorders.UPPER_LOWER * ((self.width - 2 - len(temp_title)) // 2)
                      + temp_title
