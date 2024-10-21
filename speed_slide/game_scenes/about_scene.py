@@ -9,7 +9,7 @@ class AboutScene(Scene):
     def __init__(self):
         super().__init__(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, ' ')
 
-        [self.background_rft.set_format(y, slice(width)) for y in range(height)]
+        [self.background_rft.set_format(y, slice(self.width)) for y in range(self.height)]
 
         # title
         lbl_title = TxtLabel('lbl_title', 50, 3, 0, 1, 0, f'{"Meet the Team~":^46}',
@@ -66,7 +66,7 @@ class AboutScene(Scene):
             for card, target_x in list(zip(cards, target_x_coords)):
                 card.x_coord = min(x, target_x)
             self.render()
-            time.sleep(Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+            time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
         safe_input(RichFormatText('Press enter to return to the main menu...'))
 
@@ -75,7 +75,7 @@ class AboutScene(Scene):
             for card in cards:
                 card.x_coord = card.x_coord if x < card.x_coord else x
             self.render()
-            time.sleep(Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+            time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
         # clear controls
         self.controls.clear()

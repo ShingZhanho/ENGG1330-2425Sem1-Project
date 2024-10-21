@@ -38,7 +38,7 @@ Y88b  d88P 888        888   888  .d88P 888
             lbl_speed.x_coord = i
             lbl_slide.x_coord = self.width - i - lbl_slide.width
             self.render()
-            time.sleep(Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
+            time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
         lbl_speed.x_coord = 27 # place at center
         lbl_slide.x_coord = 29
