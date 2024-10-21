@@ -58,8 +58,6 @@ def __start_new_game():
     __screen.transition_into_scene(main_scene, transitions.slide_from_right)
     __screen.play_scene()
 
-    input()
-
 def main(**kwargs):
     # configures debug tools
     Constants.DEBUG_TOOLS = DebugTools()

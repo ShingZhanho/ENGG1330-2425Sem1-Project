@@ -1,8 +1,9 @@
 from tui import Scene, ForegroundColours, RichFormatText, TextFormats
 from tui.controls import TxtLabel, DialogueWindow
 from speed_slide.__game_consts import _Constants as Constants
-from speed_slide.__debug import DebugTools
+from speed_slide.io import safe_input
 import random
+import time
 
 
 class MainGameScene(Scene):
@@ -39,10 +40,17 @@ class MainGameScene(Scene):
         # ui setup
 
         # header label
-        lbl_header = TxtLabel('lbl_header', 30, 1, 2, 3,
+        lbl_header = TxtLabel('lbl_header', 30, 1, 4, 4,
                               text='Solve the Slide Puzzle, FAST!')
         lbl_header.formatted_text.set_format(0, slice(30), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
         dw_main.controls.append(lbl_header)
+
+        # footer label
+        lbl_footer = TxtLabel('lbl_footer', 35, 2, 4, dw_main.height - 4,
+                              text='You may slide the following blocks:\n  01 02 03 04')
+        (lbl_footer.formatted_text
+         .set_format(0, slice(35), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
+         .set_format(1, slice(13), ForegroundColours.CYAN))
 
         # generate labels from board
         self.__update_labels()
@@ -56,6 +64,16 @@ class MainGameScene(Scene):
 
         self.render()
 
+        time.sleep(1)
+
+        # blind blocks temporarily, row by row
+        for y in range(self.__difficulty):
+            for x in range(self.__difficulty):
+                lbl = self.__board_labels[(x, y)]
+                lbl.text = '??'
+                self.render()
+                time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
+
         # shuffle the game board
         for _ in range(self.__target_moves):
             while True:
@@ -64,6 +82,93 @@ class MainGameScene(Scene):
                     break
             self.__gb.slide(move)
             self.__debug_solution.insert(0, move)
+
+        time.sleep(1)
+
+        # reveal blocks, row by row
+        for y in range(self.__difficulty):
+            for x in range(self.__difficulty):
+                lbl = self.__board_labels[(x, y)]
+                lbl.text = f'{self.__gb.board[(x, y)]:0>2}' if self.__gb.board[(x, y)] != 0 else '  '
+                self.render()
+                time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
+
+        dw_main.controls.append(lbl_footer)
+
+        terminate_signal = False
+
+        moves = 0
+        self.__target_moves = int(self.__target_moves * 1.3)
+        max_moves = int(self.__target_moves * 2.5)
+
+        # right hand side info
+        lbl_target = TxtLabel('lbl_target', 25, 2, dw_main.width - 25, 4,
+                              text=f'TARGET MOVES\n  {self.__target_moves}')
+        (lbl_target.formatted_text
+             .set_format(0, slice(25), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
+             .set_format(0, slice(25), ForegroundColours.MAGENTA))
+
+        lbl_max = TxtLabel('lbl_max', 25, 2, dw_main.width - 25, 8,
+                          text=f'MAX MOVES\n  {max_moves}')
+        (lbl_max.formatted_text
+            .set_format(0, slice(25), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
+            .set_format(0, slice(25), ForegroundColours.MAGENTA))
+
+        lbl_moves = TxtLabel('lbl_moves', 25, 2, dw_main.width - 25, 12,
+                             text=f'MOVES\n  {moves}')
+        (lbl_moves.formatted_text
+            .set_format(0, slice(25), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
+            .set_format(0, slice(25), ForegroundColours.MAGENTA))
+
+        dw_main.controls.extend([lbl_target, lbl_max, lbl_moves])
+
+        # main game loop
+        while not self.__gb.solved:
+            # update footer
+            available_options = '  '
+            for i in range(4):
+                item = self.__gb.adjacent[i] if i < len(self.__gb.adjacent) else '--'
+                available_options += f'{item:0>2} '
+            lbl_footer.text = f'You may slide the following blocks:\n{available_options}'
+
+            # update moves
+            lbl_moves.text = f'MOVES\n  {moves}'
+            self.render()
+
+            # get user input
+            while True and not terminate_signal:
+                user_input = safe_input(RichFormatText('Enter the block number to slide: ')
+                                        .set_format(0, slice(33), ForegroundColours.WHITE, background=ForegroundColours.MAGENTA))
+                # validate input
+                # match input with commands
+                match user_input.lower():
+                    case '/quit':
+                        terminate_signal = True
+                        break
+                    case '/give-up?':
+                        if Constants.DEBUG:
+                            Constants.DEBUG_TOOLS.debug_msg = RichFormatText(
+                                f"Never gonna give you up~~ Here's the solution: {'->'.join(map(str, self.__debug_solution))}"
+                            )
+                            break
+                if not str.isnumeric(user_input):
+                    self.__display_error('Invalid input! Please enter a number from the available options.')
+                    continue
+                user_input = int(user_input)
+                if not 1 <= user_input <= self.__difficulty ** 2 - 1:
+                    self.__display_error('Invalid input! That block doesn\'t exist! Are you having illusions!?')
+                    continue
+                if user_input not in self.__gb.adjacent:
+                    self.__display_error('Invalid input! You cannot slide this block to the empty space directly!')
+                    continue
+
+                self.__gb.slide(user_input)
+                self.__update_labels()
+                moves += 1
+                break
+
+            if terminate_signal:
+                break
 
     def __update_labels(self):
         """
@@ -87,10 +192,22 @@ class MainGameScene(Scene):
             return
 
         # update existing
-        for (x, y), num in self.__gb.board:
+        for x, y in self.__gb.board:
+            num = self.__gb.board[(x, y)]
             lbl = self.__board_labels[(x, y)]
             lbl.text = f'{num:0>2}' if num != 0 else '  '
         self.render()
+
+    def __display_error(self, msg: str):
+        """
+        Displays an error message to the user with a dialogue window.
+        """
+        dw_error = DialogueWindow('dw_error', 40, 10, 30, 10, title='ERROR!', border_colour=ForegroundColours.RED)
+        lbl_error = TxtLabel('lbl_error', 36, 8, 2, 2, text=msg, auto_size=True)
+        lbl_error.text += '\nWait for 3 seconds to continue...'
+        [lbl_error.formatted_text.set_format(i, slice(36), ForegroundColours.RED) for i in range(len(lbl_error.formatted_text))]
+        dw_error.controls.append(lbl_error)
+        self.show_dialogue(dw_error, lambda _: time.sleep(3))
 
     class __GameBoard:
         """
@@ -114,21 +231,15 @@ class MainGameScene(Scene):
             self.find_adjacent()
             self.solved = False
 
-        def slide(self, number: int) -> bool:
+        def slide(self, number: int):
             """
             Slides the block with the specified number.
-            :return: Returns whether the slide is valid. ValueError is raised if the number is not on the board.
+            Validity of move should be checked before calling this method.
             """
-            if number not in self.board.values():
-                raise ValueError(f'Number {number} is not on the board.')
-            if number not in self.adjacent:
-                return False
-
             number_index = list(self.board.keys())[list(self.board.values()).index(number)]
             # swap
             self.board[number_index], self.board[self.__empty_index] = self.board[self.__empty_index], self.board[number_index]
             self.find_adjacent()
-            return True
 
         def find_adjacent(self):
             """
