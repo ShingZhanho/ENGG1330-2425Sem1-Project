@@ -64,7 +64,8 @@ D~~~~~~~~#_/____|____\___
             time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
             if x == 27: # at centre of the screen
-                lbl_score.animate_change_score(self.__total_score, self.__total_score // 1919, self.on_scene_update, self)
+                step = 0.1919191919 * 10 ** (len(str(self.__total_score)) - 1)
+                lbl_score.animate_change_score(self.__total_score, int(step), self.on_scene_update, self)
                 time.sleep(3)
 
         return lbl_road # this control is reused in the next scene

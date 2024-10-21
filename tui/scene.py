@@ -72,6 +72,15 @@ class Scene:
             self.render(suppress_hook=suppress_hook)
         return self._internal_rft.render()
 
+    def get_control(self, control_id: str) -> Control:
+        """
+        Get a control by its ID.
+        """
+        for control in self.controls:
+            if control.control_id == control_id:
+                return control
+        raise ValueError(f'Control with ID "{control_id}" not found.')
+
     def get_rft(self, force_rerender: bool = False, suppress_hook: bool = False) -> RichFormatText:
         """
         Get the RichFormatText object of the rendered scene.

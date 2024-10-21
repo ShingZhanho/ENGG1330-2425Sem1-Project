@@ -18,6 +18,10 @@ class ForegroundColours:
     def random(cls):
         return random.randint(30, 37)
 
+    @classmethod
+    def random_except(cls, *exceptions):
+        return random.choice([x for x in range(30, 38) if x not in exceptions])
+
 
 class BackgroundColours:
     """
@@ -37,6 +41,10 @@ class BackgroundColours:
     @classmethod
     def random(cls):
         return random.randint(40, 47)
+
+    @classmethod
+    def random_except(cls, *exceptions):
+        return random.choice([x for x in range(40, 48) if x not in exceptions])
 
 
 class TextFormats:
