@@ -11,7 +11,7 @@ class DebugTools:
         self.__debug_msg = None
 
     @property
-    def debug_msg(self):
+    def debug_msg(self) -> RichFormatText:
         val = self.__debug_msg
         self.__debug_msg = None # msg is used only once
         return val

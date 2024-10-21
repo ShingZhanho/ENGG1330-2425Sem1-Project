@@ -56,6 +56,7 @@ def __start_new_game():
     main_scene = MainGameScene(difficulty, attempt, total_score)
     main_scene.add_control_at(lbl_road, lbl_road.x_coord, lbl_road.y_coord)
     __screen.transition_into_scene(main_scene, transitions.slide_from_right)
+    __screen.play_scene()
 
     input()
 
