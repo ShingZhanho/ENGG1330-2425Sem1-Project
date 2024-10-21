@@ -88,7 +88,7 @@ class Scene:
         Show a dialogue window. Ask for user input and return the result.
         If func is None, the dialogue will only be displayed on top as if it is a general control.
         """
-        dialogue.z_coord = max(self.controls, key=lambda c: c.z_coord).z_coord + 1
+        dialogue.z_coord = max([c.z_coord for c in self.controls] + [0]) + 1
         self.controls.append(dialogue)
         self.render()
 
