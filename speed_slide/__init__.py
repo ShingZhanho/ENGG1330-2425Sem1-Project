@@ -53,6 +53,12 @@ def __start_new_game():
     __screen.transition_into_scene(GameLevelTitleScene(difficulty, attempt, total_score), transitions.scatter(200), Constants.ANIMATION_SECONDS_PER_FRAME)
     lbl_road: TxtLabel = __screen.play_scene() # the control is reused in the next scene
 
+    main_scene = MainGameScene(difficulty, attempt, total_score)
+    main_scene.add_control_at(lbl_road, lbl_road.x_coord, lbl_road.y_coord)
+    __screen.transition_into_scene(main_scene, transitions.slide_from_right)
+
+    input()
+
 def main(**kwargs):
     # configures debug tools
     Constants.DEBUG_TOOLS = DebugTools()
