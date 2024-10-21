@@ -1,6 +1,6 @@
 import time
 from tui.controls import Control, TxtLabel
-from tui import ForegroundColours, TextFormats
+from tui import ForegroundColours, TextFormats, Scene, RichFormatText
 from speed_slide.__game_consts import _Constants as Constants
 
 
@@ -25,12 +25,13 @@ class ScoreLabel(Control):
         self.__internal_txt_label: TxtLabel = TxtLabel(f'{control_id}__internal_txt_label', 10, 1, 0, 0, 0, text='0' * 10)
         self.__render()
 
-    def animate_change_score(self, new_score: int, step: int = 0, screen_painter: callable = None):
+    def animate_change_score(self, new_score: int, step: int = 0, screen_painter: callable = None, parent: Scene = None):
         """
         Animates the change to a new score by step. If step is 0, the change is immediate.
         :param new_score: Target score.
         :param step: Step to change the score by.
         :param screen_painter: The function that is called to update the screen.
+        :param parent: The parent scene to be repainted.
         """
         if self.__score == new_score:
             return
@@ -38,19 +39,21 @@ class ScoreLabel(Control):
         if step == 0:
             self.__score = new_score
             self.__render()
-            screen_painter() if screen_painter is not None else None
+            parent.render() if parent is not None else None
+            screen_painter(parent) if screen_painter is not None and parent is not None else None
             time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
             return
 
         for i in range(self.__score, new_score, step if new_score > self.__score else -step):
             self.__score = i if i + step <= new_score else new_score
             self.__render()
-            screen_painter() if screen_painter is not None else None
+            parent.render() if parent is not None else None
+            screen_painter(parent) if screen_painter is not None and parent is not None else None
             time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
     def render(self):
         """
-        The rendering method can only be called internally.
+        The rendering method exposed to other classes will only
         """
         pass
 
@@ -70,4 +73,5 @@ class ScoreLabel(Control):
          .set_format(0, slice(10 - len(str(self.__score)), 11), self.active_digit_colour, text_format=TextFormats.BOLD))
 
         self.__internal_txt_label.render()
-        self._internal_rft = self.__internal_txt_label.get_rft_object()
+        self._internal_rft = (RichFormatText.create_by_size(self.width, self.height)
+                              .copy_from(self.__internal_txt_label.get_rft_object(), 0, 0))
