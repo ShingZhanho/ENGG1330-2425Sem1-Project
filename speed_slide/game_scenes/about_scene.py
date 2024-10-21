@@ -33,20 +33,20 @@ class AboutScene(Scene):
                                    draw_borders=True, border_colour=ForegroundColours.GREEN)
 
         info_card_eason = TxtLabel('info_card_eason', 80, 6, -81, 10, 0, r"""    ( )
-    -|-   LIU, Jialin
-     |    BEng 28' | |
+    -|-   LIU, Jialin (Eason)
+     |    BEng 28' | u3639149@connect.hku.hk | 3036391493
     / \   Docs (Developer's Handbook) | Game Design""", padding_left=2, padding_right=2, padding_top=1, padding_bottom=1,
                                    draw_borders=True, border_colour=ForegroundColours.RED)
 
         info_card_rid = TxtLabel('info_card_rid', 80, 6, -81, 16, 0, r"""
-    ( )   Rid
-   └( )┘  BEng 28' | |
+    ( )   THANT, Kyaw Win (Rid)
+   └(‡)┘  BEng 28' | u3645886@connect.hku.hk | 3036458863
     / \   Game Design | Project Video | Docs (Player's Handbook)""", padding_left=2, padding_right=2, padding_top=1, padding_bottom=1,
                                    draw_borders=True, border_colour=ForegroundColours.MAGENTA)
 
         info_card_david = TxtLabel('info_card_davie', 80, 6, -81, 22, 0, r"""
-    ( )   David
-    -|-   BEng 28' | |
+    ( )   WU, Ju Hao (David)
+    -|-   BEng 28' | u3638850@connect.hku.hk |
     / \   Testing | Project Video""", padding_left=2, padding_right=2, padding_top=1, padding_bottom=1,
                                    draw_borders=True, border_colour=ForegroundColours.YELLOW)
 

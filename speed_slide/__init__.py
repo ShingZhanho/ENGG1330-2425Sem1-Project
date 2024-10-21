@@ -73,4 +73,5 @@ def main(**kwargs):
         elif user_option == 'A':
             __about()
 
+    __screen.transition_into_blank_scene(transitions.scatter(200), Constants.SCENE_TRANSITION_SECONDS_PER_FRAME)
     __screen.clear_screen()

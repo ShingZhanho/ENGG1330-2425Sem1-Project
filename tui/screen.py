@@ -30,6 +30,11 @@ class Screen(object):
             print(frame)
         self.__current_scene = new_scene
 
+    def transition_into_blank_scene(self, transition: callable = transitions.direct, time_per_frame: float = 0.1):
+        """
+        Transition into a blank scene.
+        """
+        self.transition_into_scene(self.__blank_scene, transition, time_per_frame)
 
     def print_scene(self, scene: Scene = None):
         """
@@ -41,7 +46,6 @@ class Screen(object):
         rendered = scene.get_rendered(suppress_hook=False)
         for line in rendered:
             print(line)
-
 
     def play_scene(self):
         """
