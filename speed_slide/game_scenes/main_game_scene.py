@@ -139,7 +139,7 @@ class MainGameScene(Scene):
         dw_main.controls.extend([lbl_target, lbl_max, lbl_moves, lbl_objectives])
 
         # for random events:
-        blind_event_counter = 0 # max = self.__difficulty
+        blind_event_counter = 0 # max = self.__difficulty - 2
         blinded_blocks: list[int] = []
 
         # main game loop
@@ -182,18 +182,14 @@ class MainGameScene(Scene):
                 if user_input not in self.__gb.adjacent:
                     self.__display_error('Invalid input! You cannot slide this block to the empty space directly!')
                     continue
-
-                self.__gb.slide(user_input)
-                self.__update_labels(blinded_blocks)
                 moves += 1
+                self.__gb.slide(user_input)
                 break
 
             if terminate_signal:
                 return -1, None
-
             if moves >= max_moves:
                 return 2, None
-
             if self.__gb.solved and moves <= self.__target_moves:
                 return 0, awards
             if self.__gb.solved and moves > self.__target_moves:
@@ -205,14 +201,18 @@ class MainGameScene(Scene):
                 if event_name == 'None':
                     continue
                 if points_change == 0: # blinded block event
-                    if blind_event_counter >= self.__difficulty:
+                    if blind_event_counter >= self.__difficulty - 2:
                         continue
                     blind_event_counter += 1
                     self.__display_random_event((event_name, points_change))
                     blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
+                    continue
+
                 # other random events
                 self.__display_random_event((event_name, points_change))
                 awards.append((event_name, points_change))
+
+            self.__update_labels(blinded_blocks)
 
     def __update_labels(self, blinded: list[int] | None = None):
         """
@@ -242,7 +242,8 @@ class MainGameScene(Scene):
         for x, y in self.__gb.board:
             num = self.__gb.board[(x, y)]
             lbl = self.__board_labels[(x, y)]
-            lbl.text = f'{num:0>2}' if num != 0 else '  '
+            lbl_text = f'{num:0>2}' if num not in blinded else '**'
+            lbl.text = lbl_text if num != 0 else '  '
         self.render()
 
     def __generate_random_event(self) -> tuple[str, int]:
@@ -253,20 +254,21 @@ class MainGameScene(Scene):
         """
         events = (
             ('None', 0),
-            ('A witch used a spell on you! Three of the blocks are now hidden from you!', 0),
+            ('A witch used a spell on you! Some of the blocks are now hidden from you!', 0),
             ('A golden coin was hidden under the block! You sold it for 100 points!', 100),
             ('An angel blessed you! +500 points!', 500),
             ('A sneaky mouse stole 100 points from you! :-(', -100),
             ('Bad luck! A witch cursed you! -300 points! @#%$!', -300),
         )
-        bad_to_good_ratio = self.__difficulty / self.__difficulty ** 2
+        bad_events_weight = self.__difficulty / (self.__difficulty + self.__difficulty ** 2)
+        good_events_weight = 1 - bad_events_weight
         event_weights = (
             75, # None
             5,  # Blinded blocks
-            (1 / bad_to_good_ratio) * 20 * 0.8, # Golden coin
-            (1 / bad_to_good_ratio) * 20 * 0.2, # Angel
-            bad_to_good_ratio * 20 * 0.8, # Mouse
-            bad_to_good_ratio * 20 * 0.2, # Witch
+            good_events_weight * 20 * 0.8, # Golden coin
+            good_events_weight * 20 * 0.2, # Angel
+            bad_events_weight * 20 * 0.8, # Mouse
+            bad_events_weight * 20 * 0.2, # Witch
         )
         event = random.choices(events, weights=event_weights, k=1)[0]
         return event
@@ -294,8 +296,8 @@ class MainGameScene(Scene):
         ascii_arts_map = { # TODO: replace arts with appropriate ascii arts
             0: arts.WITCH_WAND,  # Blinded blocks
             100: arts.GOLDEN_COINS,  # Golden coin
-            500: arts.WITCH_WAND,  # Angel
-            -100: arts.WITCH_WAND,  # Mouse
+            500: arts.ANGEL,  # Angel
+            -100: arts.MOUSE,  # Mouse
             -300: arts.WITCH_WAND  # Witch
         }
         art = ascii_arts_map[event[1]]
