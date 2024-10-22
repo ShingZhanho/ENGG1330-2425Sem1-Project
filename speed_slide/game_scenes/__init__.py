@@ -3,3 +3,4 @@ from speed_slide.game_scenes.main_game_menu_scene import MainGameMenuScene
 from speed_slide.game_scenes.about_scene import AboutScene
 from speed_slide.game_scenes.game_level_title_scene import GameLevelTitleScene
 from speed_slide.game_scenes.main_game_scene import MainGameScene
+from speed_slide.game_scenes.level_summary_scene import LevelSummaryScene
