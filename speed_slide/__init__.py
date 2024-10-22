@@ -62,19 +62,17 @@ def __start_new_game():
         if result == -1:
             break # stop immediately
 
-        if result == 0 or result == 1:
-            summary_scene = LevelSummaryScene(difficulty, attempt, result, awards)
-            summary_scene.add_control_at(lbl_road, lbl_road.x_coord, lbl_road.y_coord)
-            __screen.transition_into_scene(summary_scene, transitions.slide_from_right, Constants.ANIMATION_SECONDS_PER_FRAME)
-            total_score = __screen.play_scene() # LevelSummaryScene.play() returns the new total score
-
         if result == 0: # advance to next level
             difficulty = difficulty + 1 if difficulty < 6 else 6
-            attempt = 1
+            attempt = 1 if difficulty != 6 else attempt + 1
         elif result == 1: # stay at same level
             attempt += 1
 
-        input()
+        if result == 0 or result == 1:
+            summary_scene = LevelSummaryScene(total_score, awards, result == 0, difficulty == 6)
+            summary_scene.add_control_at(lbl_road, lbl_road.x_coord, lbl_road.y_coord)
+            __screen.transition_into_scene(summary_scene, transitions.slide_from_right, Constants.ANIMATION_SECONDS_PER_FRAME)
+            total_score = __screen.play_scene() # LevelSummaryScene.play() returns the new total score
 
 
 def main(**kwargs):

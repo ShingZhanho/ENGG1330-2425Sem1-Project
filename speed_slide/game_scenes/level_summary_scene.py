@@ -1,4 +1,5 @@
-from tui import Scene, ForegroundColours, TextFormats
+from speed_slide.io import safe_input
+from tui import Scene, ForegroundColours, TextFormats, RichFormatText
 from tui.controls import DialogueWindow, TxtLabel
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.game_scenes.customised_controls import ScoreLabel
@@ -10,19 +11,19 @@ class LevelSummaryScene(Scene):
     Displaying the summary (scores, awards, statistics, etc.) of the previous game level.
     """
 
-    def __init__(self, difficulty: int, attempt: int, total_score: int, awards: tuple[str, int]):
+    def __init__(self, total_score: int, awards: tuple[str, int], level_up: bool, is_top: bool):
         super().__init__(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT)
-        self.difficulty = difficulty
-        self.attempt = attempt
         self.total_score = total_score
         self.awards = awards
+        self.level_up = level_up
+        self.is_top = is_top
 
     def play(self) -> int:
         """
         Play the scene. Returns the new total score.
         :return: New total score.
         """
-        dw = DialogueWindow('dw', 82, 26, 14, 2, 0, 'LEVEL  CLEARED',
+        dw = DialogueWindow('dw', 82, 22, 14, 4, 0, 'LEVEL  CLEARED',
                             border_colour=ForegroundColours.YELLOW)
 
         lbl_congrats = TxtLabel('lbl_congrats', 40, 1, 20, 2, 0,
@@ -57,7 +58,7 @@ class LevelSummaryScene(Scene):
         ])
 
         self.show_dialogue(dw, None)
-        time.sleep(2)
+        time.sleep(1)
 
         total_score_change = 0
 
@@ -70,17 +71,35 @@ class LevelSummaryScene(Scene):
             self.render()
             time.sleep(1)
 
-            score_lbl_level.animate_change_score(total_score_change, 191, self.on_scene_update, self)
             total_score_change += score_change
+            step = int(0.1919191919 * 10 ** (len(str(score_change)) - 1))
+            score_lbl_level.animate_change_score(total_score_change, step, self.on_scene_update, self)
 
             time.sleep(2)
 
             lbl_event_name.text = ''
             lbl_event_score.text = ''
             self.render()
+            time.sleep(1)
 
         self.total_score += total_score_change
         step = int(0.1919191919 * 10 ** (len(str(self.total_score)) - 1))
         score_lbl_total.animate_change_score(self.total_score, step, self.on_scene_update, self)
+
+        result_text = ('Promoted to the next level!! Challenge yourself!' if self.level_up else
+                       'Let\'s stay at this level and practice more!')
+        text_colour = ForegroundColours.GREEN if self.level_up else ForegroundColours.RED
+
+        if self.is_top:
+            result_text = 'MASTER OF SLIDE! You are at the top level! Continue to challenge yourself!'
+            text_colour = ForegroundColours.YELLOW
+
+        lbl_result = TxtLabel('lbl_result', len(result_text), 1, (80 - len(result_text)) // 2, 18, 0, result_text)
+        lbl_result.formatted_text.set_format(0, slice(None), text_colour, text_format=TextFormats.BOLD)
+
+        dw.controls.append(lbl_result)
+        self.render()
+
+        safe_input(RichFormatText('Press Enter to continue...'))
 
         return self.total_score

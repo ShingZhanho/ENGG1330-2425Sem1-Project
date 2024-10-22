@@ -140,6 +140,7 @@ class MainGameScene(Scene):
         # for random events:
         blind_event_counter = 0 # max = self.__difficulty - 2
         blinded_blocks: list[int] = []
+        awards: list[tuple[str, int]] = [] # refer to docstring for awards/penalties
 
         # main game loop
         while not self.__gb.solved:
@@ -154,7 +155,21 @@ class MainGameScene(Scene):
             lbl_moves.text = f'MOVES\n  {moves}'
             self.render()
 
-            awards: list[tuple[str, int]] = [] # refer to docstring for awards/penalties
+            # random event when target < moves < max
+            if self.__target_moves < moves < max_moves:
+                event_msg, points_change, event_name = self.__generate_random_event()
+                if event_msg != 'None' and points_change == 0:
+                    # blinded block event
+                    if blind_event_counter < self.__difficulty - 2:
+                        blind_event_counter += 1
+                        self.__display_random_event((event_msg, points_change))
+                        blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
+                elif event_msg != 'None':
+                    # other random events
+                    self.__display_random_event((event_msg, points_change))
+                    awards.append((event_name, points_change))
+
+            self.__update_labels(blinded_blocks)
 
             # get user input
             while not terminate_signal and not moves >= max_moves:
@@ -171,6 +186,18 @@ class MainGameScene(Scene):
                                                 text='Never gonna give you up! ANS: ' + ' '.join(str(x) for x in self.__debug_solution))
                         self.add_control_at(lbl_solution, 0, 0)
                         break
+                    case '/pass-b':
+                        if Constants.DEBUG:
+                            self.__gb.solved = True
+                            moves = self.__target_moves - 1
+                            awards.append(('DEBUG PASS BELOW TARGET', 8))
+                            break
+                    case '/pass-a':
+                        if Constants.DEBUG:
+                            self.__gb.solved = True
+                            moves = self.__target_moves + 1
+                            awards.append(('DEBUG PASS ABOVE TARGET', 11))
+                            break
                 if not str.isnumeric(user_input):
                     self.__display_error('Invalid input! Please enter a number from the available options.')
                     continue
@@ -192,28 +219,13 @@ class MainGameScene(Scene):
             if moves > max_moves:
                 return 2, None
 
-            awards.insert(0, ('PUZZLE SOLVED', 1000 * self.__difficulty))
+            if self.__gb.solved:
+                awards.insert(0, ('PUZZLE SOLVED', 1000 * self.__difficulty))
             if self.__gb.solved and moves <= self.__target_moves: # within target moves
                 awards.insert(1, ('BELOW TARGET', int((self.__target_moves - moves) * self.__difficulty ** 2) * 100))
                 return 0, awards
             if self.__gb.solved and moves > self.__target_moves:
                 return 1, awards
-
-            # random event when target < moves < max
-            if self.__target_moves < moves < max_moves:
-                event_msg, points_change, event_name = self.__generate_random_event()
-                if event_msg != 'None' and points_change == 0:
-                    # blinded block event
-                    if blind_event_counter < self.__difficulty - 2:
-                        blind_event_counter += 1
-                        self.__display_random_event((event_msg, points_change))
-                        blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
-                elif event_msg != 'None':
-                    # other random events
-                    self.__display_random_event((event_msg, points_change))
-                    awards.append((event_name, points_change))
-
-            self.__update_labels(blinded_blocks)
 
             # END OF MAIN GAME LOOP
 
