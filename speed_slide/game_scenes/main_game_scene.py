@@ -293,7 +293,7 @@ class MainGameScene(Scene):
         time.sleep(2)
 
         arts = ASCIIArts()
-        ascii_arts_map = { # TODO: replace arts with appropriate ascii arts
+        ascii_arts_map = {
             0: arts.WITCH_WAND,  # Blinded blocks
             100: arts.GOLDEN_COINS,  # Golden coin
             500: arts.ANGEL,  # Angel
