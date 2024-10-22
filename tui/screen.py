@@ -21,7 +21,12 @@ class Screen(object):
         """
         self.__current_scene.remove_scene_update_hook()
         new_scene.register_scene_update_hook(self.print_scene)
-        frames = transition(self.__current_scene, new_scene)
+        frames = None
+        if self.__current_scene.exit_transition is not None:
+            # overrides transition if exit_transition is specified
+            frames = self.__current_scene.exit_transition(self.__current_scene, new_scene)
+        else:
+            frames = transition(self.__current_scene, new_scene)
         if len(frames) == 1:
             time_per_frame = 0
         for frame in frames:

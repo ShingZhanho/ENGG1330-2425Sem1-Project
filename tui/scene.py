@@ -8,7 +8,7 @@ class Scene:
     The basic class for a scene.
     """
 
-    def __init__(self, width: int, height: int, background: str = ' '):
+    def __init__(self, width: int, height: int, background: str = ' ', exit_transition: callable = None):
         self._internal_rft: RichFormatText | None = None
 
         self.background = background
@@ -17,6 +17,7 @@ class Scene:
         self.width = width
         self.height = height
         self.on_scene_update: callable = None
+        self.exit_transition = exit_transition
 
     def register_scene_update_hook(self, func: callable):
         """

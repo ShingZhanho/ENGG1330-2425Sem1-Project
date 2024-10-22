@@ -1,7 +1,6 @@
-from cProfile import label
-
 from tui import Scene, ForegroundColours, RichFormatText, TextFormats, BackgroundColours
 from tui.controls import TxtLabel, DialogueWindow
+from tui import transitions
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.io import safe_input
 from speed_slide.game_scenes.__random_events_ascii_arts import EventASCIIArts as ASCIIArts
@@ -19,6 +18,7 @@ class MainGameScene(Scene):
 
         self.__difficulty = difficulty
         self.__attempt = attempt
+        self.exit_transition = transitions.slide_from_right
 
         self.__gb = self.__GameBoard(difficulty)
 
