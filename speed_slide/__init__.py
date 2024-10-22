@@ -64,6 +64,9 @@ def __start_new_game():
 
         if result == 0: # advance to next level
             difficulty = min(6, difficulty + 1)
+            attempt = 1
+        elif result == 1: # stay at same level
+            attempt += 1
 
 
 def main(**kwargs):

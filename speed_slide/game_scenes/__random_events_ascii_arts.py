@@ -7,9 +7,7 @@ class EventASCIIArts:
             """
 
             def __init__(self):
-                [self.WITCH_WAND.set_format(i, slice(38), ForegroundColours.YELLOW, BackgroundColours.DEFAULT) for i in range(13)]
-
-            WITCH_WAND = RichFormatText(r"""
+                self.WITCH_WAND = RichFormatText(r"""
 
 
 
@@ -22,3 +20,20 @@ class EventASCIIArts:
 ======================================
 
 """)
+                [self.WITCH_WAND.set_format(i, slice(38), ForegroundColours.MAGENTA, BackgroundColours.DEFAULT) for i in range(13)]
+
+
+                self.GOLDEN_COINS = RichFormatText(r"""                                       
+                                      
+           _-----_                    
+       ,"¯         ¯",
+      /      _|_      \               
+     |      (_|_`      |              
+     |      ,_|_)      |              
+      \       |       /               
+       ¯".         ."¯                
+           ¯-----¯                    
+                                      
+
+""")
+                [self.GOLDEN_COINS.set_format(i, slice(None), ForegroundColours.YELLOW, BackgroundColours.DEFAULT) for i in range(13)]

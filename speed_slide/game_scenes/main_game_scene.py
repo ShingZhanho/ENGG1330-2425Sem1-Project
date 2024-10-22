@@ -27,7 +27,7 @@ class MainGameScene(Scene):
                                  title='', border_colour=ForegroundColours.YELLOW)
         self.show_dialogue(dw_main, None)
 
-        self.__target_moves = random.randint(20, 50)
+        self.__target_moves = random.randint(difficulty ** 2, difficulty ** 3)
         self.__debug_solution: list[int] = []
         self.__board_labels: dict[tuple[int, int], TxtLabel] = {}
 
@@ -80,13 +80,17 @@ class MainGameScene(Scene):
                 time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
         # shuffle the game board
+        last_n_moves = [] # stores last n moves to reduce redundant random moves, n = difficulty
         for _ in range(self.__target_moves if not Constants.DEBUG else 3):
             while True:
                 move = random.choice(self.__gb.adjacent)
-                if len(self.__debug_solution) == 0 or move != self.__debug_solution[0]:
+                if move not in last_n_moves or all(self.__gb.adjacent[i] in last_n_moves for i in range(len(self.__gb.adjacent))):
                     break
             self.__gb.slide(move)
             self.__debug_solution.insert(0, move)
+            last_n_moves.append(move)
+            if len(last_n_moves) > self.__difficulty:
+                last_n_moves.pop(0)
 
         time.sleep(1)
 
@@ -164,11 +168,10 @@ class MainGameScene(Scene):
                         terminate_signal = True
                         break
                     case '/give-up?':
-                        if Constants.DEBUG:
-                            Constants.DEBUG_TOOLS.debug_msg = RichFormatText(
-                                f"Never gonna give you up~~ Here's the solution: {'->'.join(map(str, self.__debug_solution))}"
-                            )
-                            break
+                        lbl_solution = TxtLabel('lbl_solution', 110, 1, 0, 0, auto_size=True,
+                                                text='Never gonna give you up! ANS: ' + ' '.join(str(x) for x in self.__debug_solution))
+                        self.add_control_at(lbl_solution, 0, 0)
+                        break
                 if not str.isnumeric(user_input):
                     self.__display_error('Invalid input! Please enter a number from the available options.')
                     continue
@@ -251,7 +254,7 @@ class MainGameScene(Scene):
         events = (
             ('None', 0),
             ('A witch used a spell on you! Three of the blocks are now hidden from you!', 0),
-            ('A golden ignot was hidden under the block! You sold it for 100 points!', 100),
+            ('A golden coin was hidden under the block! You sold it for 100 points!', 100),
             ('An angel blessed you! +500 points!', 500),
             ('A sneaky mouse stole 100 points from you! :-(', -100),
             ('Bad luck! A witch cursed you! -300 points! @#%$!', -300),
@@ -260,7 +263,7 @@ class MainGameScene(Scene):
         event_weights = (
             75, # None
             5,  # Blinded blocks
-            (1 / bad_to_good_ratio) * 20 * 0.8, # Golden ignot
+            (1 / bad_to_good_ratio) * 20 * 0.8, # Golden coin
             (1 / bad_to_good_ratio) * 20 * 0.2, # Angel
             bad_to_good_ratio * 20 * 0.8, # Mouse
             bad_to_good_ratio * 20 * 0.2, # Witch
@@ -290,7 +293,7 @@ class MainGameScene(Scene):
         arts = ASCIIArts()
         ascii_arts_map = { # TODO: replace arts with appropriate ascii arts
             0: arts.WITCH_WAND,  # Blinded blocks
-            100: arts.WITCH_WAND,  # Golden ignot
+            100: arts.GOLDEN_COINS,  # Golden coin
             500: arts.WITCH_WAND,  # Angel
             -100: arts.WITCH_WAND,  # Mouse
             -300: arts.WITCH_WAND  # Witch
@@ -380,10 +383,15 @@ class MainGameScene(Scene):
             """
             Checks if the board has been solved. Result is stored in self.solved.
             """
-            solved = False
+            solved = True
             counter = 1
             for y in range(self.__difficulty):
                 for x in range(self.__difficulty):
-                    solved = self.board[(x, y)] == (counter if x != self.__difficulty - 1 and y != self.__difficulty - 1 else 0)
+                    if x == self.__difficulty - 1 and y == self.__difficulty - 1:
+                        solved = solved and self.board[(x, y)] == 0
+                    else:
+                        solved = solved and self.board[(x, y)] == counter
+                    if not solved:
+                        return
                     counter += 1
-            self.solved = solved
+            self.solved = True
