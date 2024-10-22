@@ -19,6 +19,15 @@ class GameLevelTitleScene(Scene):
         self.__level_attempt = level_attempt
         self.__total_score = total_score
 
+        # configure the road
+        lbl_road = TxtLabel('lbl_road', 110, 5, 0, 14,
+                            text='=' * 110 + '\n' + ' ' * 110 + '\n' + '  -  ' * 22 + '\n' + ' ' * 110 + '\n' + '=' * 110)
+        (lbl_road.formatted_text
+         .set_format(0, slice(0, 110), ForegroundColours.YELLOW)
+         .set_format(4, slice(0, 110), ForegroundColours.YELLOW))
+
+        self.add_control_at(lbl_road, 0, 15)
+
     def play(self):
         # configure the dialogue box
         dw_level_title = DialogueWindow('dw_level_title', 30, 7,8, 0, 1, title='', border_colour=ForegroundColours.BLUE)
@@ -45,14 +54,6 @@ D~~~~~~~~#_/____|____\___
         (lbl_car.formatted_text
          .set_format(1, slice(0, 10), ForegroundColours.MAGENTA)) # the "road"
 
-        # configure the road
-        lbl_road = TxtLabel('lbl_road', 110, 5, 0, 14,
-                            text='=' * 110 + '\n' + ' ' * 110 + '\n' + '  -  ' * 22 + '\n' + ' ' * 110 + '\n' + '=' * 110)
-        (lbl_road.formatted_text
-         .set_format(0, slice(0, 110), ForegroundColours.YELLOW)
-         .set_format(4, slice(0, 110), ForegroundColours.YELLOW))
-
-        self.add_control_at(lbl_road, 0, 15)
         self.add_control_at(dw_level_title, -lbl_car.width - dw_level_title.width, 12)
         self.add_control_at(lbl_car, -lbl_car.width, 16)
 
@@ -68,4 +69,4 @@ D~~~~~~~~#_/____|____\___
                 lbl_score.animate_change_score(self.__total_score, int(step), self.on_scene_update, self)
                 time.sleep(3)
 
-        return lbl_road # this control is reused in the next scene
+        return self.get_control('lbl_road') # this control is reused in the next scene

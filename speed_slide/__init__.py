@@ -50,13 +50,21 @@ def __start_new_game():
     attempt = 1
     total_score = 0
 
-    __screen.transition_into_scene(GameLevelTitleScene(difficulty, attempt, total_score), transitions.scatter(200), Constants.ANIMATION_SECONDS_PER_FRAME)
-    lbl_road: TxtLabel = __screen.play_scene() # the control is reused in the next scene
+    while True:
+        __screen.transition_into_scene(GameLevelTitleScene(difficulty, attempt, total_score), transitions.slide_from_right, Constants.ANIMATION_SECONDS_PER_FRAME)
+        lbl_road: TxtLabel = __screen.play_scene() # the control is reused in the next scene
 
-    main_scene = MainGameScene(difficulty, attempt, total_score)
-    main_scene.add_control_at(lbl_road, lbl_road.x_coord, lbl_road.y_coord)
-    __screen.transition_into_scene(main_scene, transitions.slide_from_right)
-    __screen.play_scene()
+        main_scene = MainGameScene(difficulty, attempt)
+        main_scene.add_control_at(lbl_road, lbl_road.x_coord, lbl_road.y_coord)
+        __screen.transition_into_scene(main_scene, transitions.slide_from_right, Constants.ANIMATION_SECONDS_PER_FRAME)
+        result, awards = __screen.play_scene() # refer to docstring of MainGameScene.play() for the return values
+
+        if result == -1:
+            break # stop immediately
+
+        if result == 0: # advance to next level
+            difficulty = min(6, difficulty + 1)
+
 
 def main(**kwargs):
     # configures debug tools

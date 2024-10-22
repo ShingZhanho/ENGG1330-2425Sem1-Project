@@ -1,7 +1,10 @@
-from tui import Scene, ForegroundColours, RichFormatText, TextFormats
+from cProfile import label
+
+from tui import Scene, ForegroundColours, RichFormatText, TextFormats, BackgroundColours
 from tui.controls import TxtLabel, DialogueWindow
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.io import safe_input
+from speed_slide.game_scenes.__random_events_ascii_arts import EventASCIIArts as ASCIIArts
 import random
 import time
 
@@ -11,12 +14,11 @@ class MainGameScene(Scene):
     The main game scene.
     """
 
-    def __init__(self, difficulty: int, attempt: int, total_score: int):
+    def __init__(self, difficulty: int, attempt: int):
         super().__init__(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT)
 
         self.__difficulty = difficulty
         self.__attempt = attempt
-        self.__total_score = total_score
 
         self.__gb = self.__GameBoard(difficulty)
 
@@ -33,14 +35,17 @@ class MainGameScene(Scene):
 
     def play(self):
         """
-        Starts the game
+        Starts the game and returns the game result.
+        Result is in the form of a tuple. The elements are:
+        - [0] status: int = -1 for quit, 0 for win (advance to new difficulty), 1 for win (same difficulty), 2 for lose
+        - [1] awards: list[tuple[str, int]] = awards/penalties given, in the form of (reason: str, score: int)
         """
         dw_main = self.get_control('dw_main') # type: DialogueWindow
 
         # ui setup
 
         # header label
-        lbl_header = TxtLabel('lbl_header', 30, 1, 4, 4,
+        lbl_header = TxtLabel('lbl_header', 30, 1, 4, 2,
                               text='Solve the Slide Puzzle, FAST!')
         lbl_header.formatted_text.set_format(0, slice(30), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
         dw_main.controls.append(lbl_header)
@@ -75,7 +80,7 @@ class MainGameScene(Scene):
                 time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
         # shuffle the game board
-        for _ in range(self.__target_moves):
+        for _ in range(self.__target_moves if not Constants.DEBUG else 3):
             while True:
                 move = random.choice(self.__gb.adjacent)
                 if len(self.__debug_solution) == 0 or move != self.__debug_solution[0]:
@@ -102,25 +107,36 @@ class MainGameScene(Scene):
         max_moves = int(self.__target_moves * 2.5)
 
         # right hand side info
-        lbl_target = TxtLabel('lbl_target', 25, 2, dw_main.width - 25, 4,
+        lbl_target = TxtLabel('lbl_target', 25, 2, dw_main.width - 25, 2,
                               text=f'TARGET MOVES\n  {self.__target_moves}')
         (lbl_target.formatted_text
              .set_format(0, slice(25), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
              .set_format(0, slice(25), ForegroundColours.MAGENTA))
 
-        lbl_max = TxtLabel('lbl_max', 25, 2, dw_main.width - 25, 8,
+        lbl_max = TxtLabel('lbl_max', 25, 2, dw_main.width - 25, 5,
                           text=f'MAX MOVES\n  {max_moves}')
         (lbl_max.formatted_text
             .set_format(0, slice(25), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
             .set_format(0, slice(25), ForegroundColours.MAGENTA))
 
-        lbl_moves = TxtLabel('lbl_moves', 25, 2, dw_main.width - 25, 12,
+        lbl_moves = TxtLabel('lbl_moves', 25, 2, dw_main.width - 25, 8,
                              text=f'MOVES\n  {moves}')
         (lbl_moves.formatted_text
             .set_format(0, slice(25), ForegroundColours.MAGENTA, text_format=TextFormats.UNDERLINE_AND_BOLD)
             .set_format(0, slice(25), ForegroundColours.MAGENTA))
 
-        dw_main.controls.extend([lbl_target, lbl_max, lbl_moves])
+        lbl_objectives = TxtLabel('lbl_objectives', 24, 14, dw_main.width - 25, 12,
+                                  text="[OBJECTIVES]\n" 
+                                       "Slide the blocks in order to solve the puzzle. Make as few moves as possible. "
+                                       "Solve under the target moves to earn bonus points! Watch out, random events may"
+                                       " happen when you are over the target moves and you lose when you exceed the "
+                                       "max moves!", auto_size=True)
+
+        dw_main.controls.extend([lbl_target, lbl_max, lbl_moves, lbl_objectives])
+
+        # for random events:
+        blind_event_counter = 0 # max = self.__difficulty
+        blinded_blocks: list[int] = []
 
         # main game loop
         while not self.__gb.solved:
@@ -135,8 +151,10 @@ class MainGameScene(Scene):
             lbl_moves.text = f'MOVES\n  {moves}'
             self.render()
 
+            awards: list[tuple[str, int]] = [] # refer to docstring for awards/penalties
+
             # get user input
-            while True and not terminate_signal:
+            while not terminate_signal and not moves >= max_moves:
                 user_input = safe_input(RichFormatText('Enter the block number to slide: ')
                                         .set_format(0, slice(33), ForegroundColours.WHITE, background=ForegroundColours.MAGENTA))
                 # validate input
@@ -163,31 +181,57 @@ class MainGameScene(Scene):
                     continue
 
                 self.__gb.slide(user_input)
-                self.__update_labels()
+                self.__update_labels(blinded_blocks)
                 moves += 1
                 break
 
             if terminate_signal:
-                break
+                return -1, None
 
-    def __update_labels(self):
+            if moves >= max_moves:
+                return 2, None
+
+            if self.__gb.solved and moves <= self.__target_moves:
+                return 0, awards
+            if self.__gb.solved and moves > self.__target_moves:
+                return 1, awards
+
+            # random event when target < moves < max
+            if self.__target_moves < moves < max_moves:
+                event_name, points_change = self.__generate_random_event()
+                if event_name == 'None':
+                    continue
+                if points_change == 0: # blinded block event
+                    if blind_event_counter >= self.__difficulty:
+                        continue
+                    blind_event_counter += 1
+                    self.__display_random_event((event_name, points_change))
+                    blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
+                # other random events
+                self.__display_random_event((event_name, points_change))
+                awards.append((event_name, points_change))
+
+    def __update_labels(self, blinded: list[int] | None = None):
         """
-        Create labels representing the game board.
+        Create labels representing the game board. Blinded numbers will be displayed as '**'.
         """
+        blinded = blinded if blinded is not None else []
+
         # create labels if there isn't any
         if len(self.__board_labels) == 0:
             for item in self.__gb.board:
                 x_start = (self.get_control('dw_main').width - 4 - self.__difficulty * 6 - 25 - 1) // 2 + 2 # exclude divider
                 y_start = (self.get_control('dw_main').height - 4 - self.__difficulty * 3) // 2 + 2
                 x, y = item
-                label = TxtLabel(f'lbl_block:{x};{y}', 6, 3, x_start + x * 6, y_start + y * 3,
-                                 text=f'{self.__gb.board[item]:0>2}', draw_borders=True,
-                                 border_colour=ForegroundColours.MAGENTA,
-                                 padding_top=1, padding_bottom=1, padding_left=2, padding_right=2)
-                label.formatted_text.set_format(0, slice(2), label.border_colour)
-                if label.text == '00':
-                    label.text = '  '
-                self.__board_labels[item] = label
+                text = f'{self.__gb.board[item]:0>2}' if self.__gb.board[item] not in blinded else '**'
+                lbl_block = TxtLabel(f'lbl_block:{x};{y}', 6, 3, x_start + x * 6, y_start + y * 3,
+                                     text=text, draw_borders=True,
+                                     border_colour=ForegroundColours.MAGENTA,
+                                     padding_top=1, padding_bottom=1, padding_left=2, padding_right=2)
+                lbl_block.formatted_text.set_format(0, slice(2), lbl_block.border_colour)
+                if lbl_block.text == '00':
+                    lbl_block.text = '  '
+                self.__board_labels[item] = lbl_block
             self.get_control('dw_main').controls.extend(list(self.__board_labels.values()))
             return
 
@@ -198,16 +242,87 @@ class MainGameScene(Scene):
             lbl.text = f'{num:0>2}' if num != 0 else '  '
         self.render()
 
+    def __generate_random_event(self) -> tuple[str, int]:
+        """
+        Get a random event (either award or penalties). Higher difficulty level should have larger possibility
+        of awards than of penalties.
+        :return: a rewards tuple
+        """
+        events = (
+            ('None', 0),
+            ('A witch used a spell on you! Three of the blocks are now hidden from you!', 0),
+            ('A golden ignot was hidden under the block! You sold it for 100 points!', 100),
+            ('An angel blessed you! +500 points!', 500),
+            ('A sneaky mouse stole 100 points from you! :-(', -100),
+            ('Bad luck! A witch cursed you! -300 points! @#%$!', -300),
+        )
+        bad_to_good_ratio = self.__difficulty / self.__difficulty ** 2
+        event_weights = (
+            75, # None
+            5,  # Blinded blocks
+            (1 / bad_to_good_ratio) * 20 * 0.8, # Golden ignot
+            (1 / bad_to_good_ratio) * 20 * 0.2, # Angel
+            bad_to_good_ratio * 20 * 0.8, # Mouse
+            bad_to_good_ratio * 20 * 0.2, # Witch
+        )
+        event = random.choices(events, weights=event_weights, k=1)[0]
+        return event
+
+    def __display_random_event(self, event: tuple[str, int]):
+        """
+        Displays a dialogue and asks the user to reveal the random event.
+        """
+        dw_event = DialogueWindow('dw_event', 40, 15, 30, 10, title='??????', border_colour=ForegroundColours.CYAN)
+        dw_event.controls.append(
+            TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
+        )
+        lbl_prompt = TxtLabel('lbl_prompt', 36, 1, 2, 2, text='RANDOM EVENT! Press enter to reveal.')
+        lbl_prompt.formatted_text.set_format(0, slice(36), ForegroundColours.CYAN, BackgroundColours.WHITE, TextFormats.BOLD)
+        dw_event.controls.append(lbl_prompt)
+
+        self.show_dialogue(dw_event, None)
+        safe_input()
+
+        dw_event.controls.clear()
+        self.render()
+        time.sleep(2)
+
+        arts = ASCIIArts()
+        ascii_arts_map = { # TODO: replace arts with appropriate ascii arts
+            0: arts.WITCH_WAND,  # Blinded blocks
+            100: arts.WITCH_WAND,  # Golden ignot
+            500: arts.WITCH_WAND,  # Angel
+            -100: arts.WITCH_WAND,  # Mouse
+            -300: arts.WITCH_WAND  # Witch
+        }
+        art = ascii_arts_map[event[1]]
+
+        lbl_art = (TxtLabel('lbl_art', 38, 13, 1, 1,
+                           text='\n'.join(art[i] for i in range(13))))
+        lbl_art.formatted_text.copy_from(art)
+        dw_event.controls.append(lbl_art)
+
+        lbl_event_msg = TxtLabel('lbl_event_msg', 36, 1, 2, 2, 1, auto_size=True,
+                                 text=event[0], padding_left=2, padding_right=2)
+        [lbl_event_msg.formatted_text.set_format(i, slice(None),
+                                                 ForegroundColours.GREEN if event[1] > 0 else ForegroundColours.RED)
+         for i in range(len(lbl_event_msg.formatted_text))]
+        dw_event.controls.append(lbl_event_msg)
+
+        self.render()
+        safe_input()
+        self.controls.remove(dw_event)
+
     def __display_error(self, msg: str):
         """
         Displays an error message to the user with a dialogue window.
         """
         dw_error = DialogueWindow('dw_error', 40, 10, 30, 10, title='ERROR!', border_colour=ForegroundColours.RED)
         lbl_error = TxtLabel('lbl_error', 36, 8, 2, 2, text=msg, auto_size=True)
-        lbl_error.text += '\nWait for 3 seconds to continue...'
+        lbl_error.text += '\n\nPress enter to continue.\nHint: type /quit to exit the game.'
         [lbl_error.formatted_text.set_format(i, slice(36), ForegroundColours.RED) for i in range(len(lbl_error.formatted_text))]
         dw_error.controls.append(lbl_error)
-        self.show_dialogue(dw_error, lambda _: time.sleep(3))
+        self.show_dialogue(dw_error, lambda _: input())
 
     class __GameBoard:
         """
@@ -240,6 +355,7 @@ class MainGameScene(Scene):
             # swap
             self.board[number_index], self.board[self.__empty_index] = self.board[self.__empty_index], self.board[number_index]
             self.find_adjacent()
+            self.__check_if_solved()
 
         def find_adjacent(self):
             """
@@ -260,7 +376,7 @@ class MainGameScene(Scene):
                     continue
                 self.adjacent.append(value)
 
-        def check_if_solved(self):
+        def __check_if_solved(self):
             """
             Checks if the board has been solved. Result is stored in self.solved.
             """
