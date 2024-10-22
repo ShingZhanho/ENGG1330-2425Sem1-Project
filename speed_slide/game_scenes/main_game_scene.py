@@ -18,7 +18,6 @@ class MainGameScene(Scene):
 
         self.__difficulty = difficulty
         self.__attempt = attempt
-        self.exit_transition = transitions.slide_from_right
 
         self.__gb = self.__GameBoard(difficulty)
 
@@ -186,33 +185,37 @@ class MainGameScene(Scene):
                 self.__gb.slide(user_input)
                 break
 
+            # END OF USER INPUT LOOP
+
             if terminate_signal:
                 return -1, None
-            if moves >= max_moves:
+            if moves > max_moves:
                 return 2, None
-            if self.__gb.solved and moves <= self.__target_moves:
+
+            awards.insert(0, ('PUZZLE SOLVED', 1000 * self.__difficulty))
+            if self.__gb.solved and moves <= self.__target_moves: # within target moves
+                awards.insert(1, ('BELOW TARGET', int((self.__target_moves - moves) * self.__difficulty ** 2) * 100))
                 return 0, awards
             if self.__gb.solved and moves > self.__target_moves:
                 return 1, awards
 
             # random event when target < moves < max
             if self.__target_moves < moves < max_moves:
-                event_name, points_change = self.__generate_random_event()
-                if event_name == 'None':
-                    continue
-                if points_change == 0: # blinded block event
-                    if blind_event_counter >= self.__difficulty - 2:
-                        continue
-                    blind_event_counter += 1
-                    self.__display_random_event((event_name, points_change))
-                    blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
-                    continue
-
-                # other random events
-                self.__display_random_event((event_name, points_change))
-                awards.append((event_name, points_change))
+                event_msg, points_change, event_name = self.__generate_random_event()
+                if event_msg != 'None' and points_change == 0:
+                    # blinded block event
+                    if blind_event_counter < self.__difficulty - 2:
+                        blind_event_counter += 1
+                        self.__display_random_event((event_msg, points_change))
+                        blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
+                elif event_msg != 'None':
+                    # other random events
+                    self.__display_random_event((event_msg, points_change))
+                    awards.append((event_name, points_change))
 
             self.__update_labels(blinded_blocks)
+
+            # END OF MAIN GAME LOOP
 
     def __update_labels(self, blinded: list[int] | None = None):
         """
@@ -246,19 +249,19 @@ class MainGameScene(Scene):
             lbl.text = lbl_text if num != 0 else '  '
         self.render()
 
-    def __generate_random_event(self) -> tuple[str, int]:
+    def __generate_random_event(self) -> tuple[str, int, str]:
         """
         Get a random event (either award or penalties). Higher difficulty level should have larger possibility
         of awards than of penalties.
         :return: a rewards tuple
         """
         events = (
-            ('None', 0),
-            ('A witch used a spell on you! Some of the blocks are now hidden from you!', 0),
-            ('A golden coin was hidden under the block! You sold it for 100 points!', 100),
-            ('An angel blessed you! +500 points!', 500),
-            ('A sneaky mouse stole 100 points from you! :-(', -100),
-            ('Bad luck! A witch cursed you! -300 points! @#%$!', -300),
+            ('None', 0, None),
+            ('A witch used a spell on you! Some of the blocks are now hidden from you!', 0, None),
+            ('A golden coin was hidden under the block! You sold it for 100 points!', 100, 'GOLDEN COIN FOUND'),
+            ('An angel blessed you! +500 points!', 500, 'BLESSING FROM ANGEL'),
+            ('A sneaky mouse stole 100 points from you! :-(', -100, 'SNEAKY MOUSE'),
+            ('Bad luck! A witch cursed you! -300 points! @#%$!', -300, 'WITCH CURSE'),
         )
         bad_events_weight = self.__difficulty / (self.__difficulty + self.__difficulty ** 2)
         good_events_weight = 1 - bad_events_weight
@@ -277,7 +280,7 @@ class MainGameScene(Scene):
         """
         Displays a dialogue and asks the user to reveal the random event.
         """
-        dw_event = DialogueWindow('dw_event', 40, 15, 30, 10, title='??????', border_colour=ForegroundColours.CYAN)
+        dw_event = DialogueWindow('dw_event', 40, 15, 20, 6, title='??????', border_colour=ForegroundColours.CYAN)
         dw_event.controls.append(
             TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
         )

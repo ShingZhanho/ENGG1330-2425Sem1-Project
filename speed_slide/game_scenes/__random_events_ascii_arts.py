@@ -42,14 +42,14 @@ class EventASCIIArts:
                 
                 
                 
-             -=-   
-          (\  _  /)
-          ( \( )/ )       
-          (       )
-           `>   <´   
-           /     \ 
-Pinterest  ,     , 
-@lexisoniat ¯._.¯  
+                   -=-   
+                (\  _  /)
+                ( \( )/ )       
+                (       )
+                 `>   <´   
+                 /     \ 
+      Pinterest  ,     , 
+      @lexisoniat ¯._.¯  
 """)
                 # Credit: Pinterest @lexisoniat (https://www.pinterest.com/pin/394065036117525960/
                 [self.ANGEL.set_format(i, slice(None), ForegroundColours.GREEN, BackgroundColours.DEFAULT) for i in range(13)]
