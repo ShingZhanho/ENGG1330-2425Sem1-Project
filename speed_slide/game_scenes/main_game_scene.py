@@ -221,10 +221,18 @@ class MainGameScene(Scene):
             if terminate_signal:
                 return -1, None
             if moves == max_moves:
+                for label in list(self.__board_labels.values()):
+                    label.border_colour = ForegroundColours.RED
+                    label.formatted_text.set_format(0, slice(2), ForegroundColours.RED)
+                self.__update_labels(list(range(1, self.__difficulty ** 2)))
                 return 2, None
 
             if self.__gb.solved:
                 awards.insert(0, ('PUZZLE SOLVED', 1000 * self.__difficulty))
+                for label in list(self.__board_labels.values()):
+                    label.border_colour = ForegroundColours.GREEN
+                    label.formatted_text.set_format(0, slice(2), ForegroundColours.GREEN)
+                self.__update_labels(None)
             if self.__gb.solved and moves <= self.__target_moves: # within target moves
                 awards.insert(1, ('BELOW TARGET', int((self.__target_moves - moves) * self.__difficulty ** 2) * 100))
                 return 0, awards
@@ -343,7 +351,7 @@ class MainGameScene(Scene):
         """
         dw_error = DialogueWindow('dw_error', 40, 10, 30, 10, title='ERROR!', border_colour=ForegroundColours.RED)
         lbl_error = TxtLabel('lbl_error', 36, 8, 2, 2, text=msg, auto_size=True)
-        lbl_error.text += '\n\nPress enter to continue.\nHint: type /quit to exit the game.'
+        lbl_error.text += '\n\nPress enter to continue.\nHint: type /quit to return to menu, or /surrender to see your score.'
         [lbl_error.formatted_text.set_format(i, slice(36), ForegroundColours.RED) for i in range(len(lbl_error.formatted_text))]
         dw_error.controls.append(lbl_error)
         self.show_dialogue(dw_error, lambda _: input())

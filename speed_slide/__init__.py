@@ -1,4 +1,4 @@
-from tui import Screen, RichFormatText
+from tui import Screen
 import tui.transitions as transitions
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.game_scenes import *
@@ -51,7 +51,7 @@ def __start_new_game():
     total_score = 0
 
     while True:
-        __screen.transition_into_scene(GameLevelTitleScene(difficulty, attempt, total_score), transitions.slide_from_right, Constants.ANIMATION_SECONDS_PER_FRAME)
+        __screen.transition_into_scene(GameLevelTitleScene(difficulty, attempt, total_score), transitions.scatter(200), Constants.ANIMATION_SECONDS_PER_FRAME)
         lbl_road: TxtLabel = __screen.play_scene() # the control is reused in the next scene
 
         main_scene = MainGameScene(difficulty, attempt)
@@ -86,8 +86,7 @@ def main(**kwargs):
 
     __handle_launch_options(kwargs)
 
-    if not __get_arg(kwargs, ['--skip-title'], bool, False):
-        __title()
+    __title()
 
     while True:
         user_option = __menu() # validity is ensured within MainGameMenu scene

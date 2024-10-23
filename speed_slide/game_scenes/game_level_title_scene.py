@@ -1,5 +1,5 @@
 import time
-from tui import Scene, ForegroundColours, TextFormats
+from tui import Scene, ForegroundColours, TextFormats, transitions
 from tui.controls import *
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.game_scenes.customised_controls import ScoreLabel

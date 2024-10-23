@@ -47,6 +47,48 @@ def wipe_down_to_up(from_scene: Scene, to_scene: Scene) -> list[str]:
         frames.append('\n'.join(from_scene_rendered[:i] + to_scene_rendered[i:]))
     return frames
 
+def wipe_left_to_right(from_scene: Scene, to_scene: Scene) -> list[str]:
+    """
+    Generates frames of a transition where the old scene is wiped from left to right by the new scene.
+    :param from_scene: The old scene
+    :param to_scene: The new scene
+    :return: all frames of the transition
+    """
+    from_scene_rft, to_scene_rft = __get_rendered_rft_tuple(from_scene, to_scene)
+    __ensure_same_size(from_scene, to_scene)
+
+    rft_frames = []
+
+    for i in range(0, from_scene.width, 4):
+        i = from_scene.width if i + 4 > from_scene.width else i
+        frame = RichFormatText.create_by_size(from_scene.width, from_scene.height)
+        frame.copy_from(from_scene_rft, 0, 0)
+        frame.copy_from(to_scene_rft, 0, i - from_scene.width)
+        rft_frames.append(frame)
+
+    return ['\n'.join(rft.render()) for rft in rft_frames]
+
+def wipe_right_to_left(from_scene: Scene, to_scene: Scene) -> list[str]:
+    """
+    Generates frames of a transition where the old scene is wiped from right to left by the new scene.
+    :param from_scene: The old scene
+    :param to_scene: The new scene
+    :return: all frames of the transition
+    """
+    from_scene_rft, to_scene_rft = __get_rendered_rft_tuple(from_scene, to_scene)
+    __ensure_same_size(from_scene, to_scene)
+
+    rft_frames = []
+
+    for i in range(from_scene.width - 1, -1, -4):
+        i = 0 if i - 4 < 0 else i
+        frame = RichFormatText.create_by_size(from_scene.width, from_scene.height)
+        frame.copy_from(from_scene_rft, 0, 0)
+        frame.copy_from(to_scene_rft, 0, i)
+        rft_frames.append(frame)
+
+    return ['\n'.join(rft.render()) for rft in rft_frames]
+
 def slide_from_top(from_scene: Scene, to_scene: Scene) -> list[str]:
     """
     Generates frames of a transition where the new scene slides from the top to the bottom.
@@ -166,6 +208,10 @@ def get_random(scatter_cpf: int = 100) -> callable:
         scatter(scatter_cpf),
         wipe_up_to_down,
         wipe_down_to_up,
+        wipe_left_to_right,
+        wipe_right_to_left,
         slide_from_top,
         slide_from_bottom,
+        slide_from_left,
+        slide_from_right,
     ))
