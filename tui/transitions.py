@@ -88,6 +88,7 @@ def slide_from_left(from_scene: Scene, to_scene: Scene) -> list[str]:
     rft_frames = []
 
     for i in range(1, to_scene.width, 4):
+        i = to_scene.width if i + 4 > to_scene.width else i
         frame = RichFormatText.create_by_size(to_scene.width, to_scene.height)
         frame.copy_from(from_scene_rft, 0, i)
         frame.copy_from(to_scene_rft, 0, i - to_scene.width)
@@ -108,6 +109,7 @@ def slide_from_right(from_scene: Scene, to_scene: Scene) -> list[str]:
     rft_frames = []
 
     for i in range(to_scene.width - 1, -1, -4):
+        i = 0 if i - 4 < 0 else i
         frame = RichFormatText.create_by_size(to_scene.width, to_scene.height)
         frame.copy_from(from_scene_rft, 0, i - to_scene.width)
         frame.copy_from(to_scene_rft, 0, i)

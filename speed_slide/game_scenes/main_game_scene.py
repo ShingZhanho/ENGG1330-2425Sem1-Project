@@ -157,17 +157,18 @@ class MainGameScene(Scene):
 
             # random event when target < moves < max
             if self.__target_moves < moves < max_moves:
-                event_msg, points_change, event_name = self.__generate_random_event()
-                if event_msg != 'None' and points_change == 0:
-                    # blinded block event
-                    if blind_event_counter < self.__difficulty - 2:
-                        blind_event_counter += 1
+                if random.choices((True, False), weights=(30, 70), k=1)[0]:
+                    event_msg, points_change, event_name = self.__generate_random_event()
+                    if event_msg != 'None' and points_change == 0:
+                        # blinded block event
+                        if blind_event_counter < self.__difficulty - 2:
+                            blind_event_counter += 1
+                            self.__display_random_event((event_msg, points_change))
+                            blinded_blocks.extend(random.choices(range(1, self.__difficulty ** 2), k=2))
+                    elif event_msg != 'None':
+                        # other random events
                         self.__display_random_event((event_msg, points_change))
-                        blinded_blocks = random.choices(range(1, self.__difficulty ** 2), k=2)
-                elif event_msg != 'None':
-                    # other random events
-                    self.__display_random_event((event_msg, points_change))
-                    awards.append((event_name, points_change))
+                        awards.append((event_name, points_change))
 
             self.__update_labels(blinded_blocks)
 
@@ -198,6 +199,10 @@ class MainGameScene(Scene):
                             moves = self.__target_moves + 1
                             awards.append(('DEBUG PASS ABOVE TARGET', 11))
                             break
+                    case '/fail':
+                        if Constants.DEBUG:
+                            moves = max_moves
+                            break
                 if not str.isnumeric(user_input):
                     self.__display_error('Invalid input! Please enter a number from the available options.')
                     continue
@@ -216,7 +221,7 @@ class MainGameScene(Scene):
 
             if terminate_signal:
                 return -1, None
-            if moves > max_moves:
+            if moves == max_moves:
                 return 2, None
 
             if self.__gb.solved:
@@ -297,7 +302,7 @@ class MainGameScene(Scene):
             TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
         )
         lbl_prompt = TxtLabel('lbl_prompt', 36, 1, 2, 2, text='RANDOM EVENT! Press enter to reveal.')
-        lbl_prompt.formatted_text.set_format(0, slice(36), ForegroundColours.CYAN, BackgroundColours.WHITE, TextFormats.BOLD)
+        lbl_prompt.formatted_text.set_format(0, slice(36), ForegroundColours.CYAN, TextFormats.BOLD)
         dw_event.controls.append(lbl_prompt)
 
         self.show_dialogue(dw_event, None)
