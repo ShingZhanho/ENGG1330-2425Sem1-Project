@@ -106,8 +106,8 @@ class MainGameScene(Scene):
         terminate_signal = False
 
         moves = 0
-        self.__target_moves = int(self.__target_moves * 1.3)
-        max_moves = int(self.__target_moves * 2.5)
+        self.__target_moves = self.__target_moves * 2
+        max_moves = self.__target_moves * 4
 
         # right hand side info
         lbl_target = TxtLabel('lbl_target', 25, 2, dw_main.width - 25, 2,
@@ -199,10 +199,9 @@ class MainGameScene(Scene):
                             moves = self.__target_moves + 1
                             awards.append(('DEBUG PASS ABOVE TARGET', 11))
                             break
-                    case '/fail':
-                        if Constants.DEBUG:
-                            moves = max_moves
-                            break
+                    case '/surrender':
+                        moves = max_moves
+                        break
                 if not str.isnumeric(user_input):
                     self.__display_error('Invalid input! Please enter a number from the available options.')
                     continue
