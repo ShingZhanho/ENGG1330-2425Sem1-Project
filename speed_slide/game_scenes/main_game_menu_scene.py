@@ -1,3 +1,5 @@
+import time
+
 from tui import *
 from tui.controls import *
 from speed_slide.io import safe_input, beep
@@ -37,22 +39,31 @@ class MainGameMenuScene(Scene):
         lbl_footer.formatted_text.set_format(0, slice(9, 14), ForegroundColours.YELLOW, TextFormats.UNDERLINE)
         menu_dw.controls.extend([lbl_header, lbl_options, lbl_footer])
 
-        def get_user_input(scene: Scene):
-            valid_inputs = ['N', 'H', 'A', 'Q']
-            while True:
-                user_option = safe_input(RichFormatText('Select an option: ').set_format(0, slice(19), ForegroundColours.MAGENTA)).upper()[:1]
-                if user_option.upper() in valid_inputs:
-                    break
+        self.show_dialogue(menu_dw, None)
 
-                # show error message
-                invalid_option_dw = DialogueWindow('invalid_alert_dw',30, 10, 40, 6, title='ERROR!', border_colour=ForegroundColours.RED)
-                lbl = TxtLabel('lbl', 28, 5, 1, 4, text=f'Option \"{user_option}\" is invalid! Please try again.',
-                         padding_left = 2, padding_right = 2, auto_size=True)
-                [lbl.formatted_text.set_format(y, slice(lbl.width), ForegroundColours.RED) for y in range(len(lbl.formatted_text))]
-                invalid_option_dw.controls.append(lbl)
-                beep()
-                scene.show_dialogue(invalid_option_dw, lambda _: safe_input(RichFormatText('Press any key to continue...')))
+        valid_inputs = ['N', 'H', 'A', 'Q']
+        while True:
+            user_option = safe_input(RichFormatText('Select an option: ').set_format(0, slice(19), ForegroundColours.MAGENTA)).upper()[:1]
+            if user_option in valid_inputs:
+                option_line = {
+                    'N': (1, slice(4, 17)),
+                    'H': (2, slice(4, 13)),
+                    'A': (5, slice(4, 14)),
+                    'Q': (6, slice(4, 13)),
+                }[user_option]
+                fg_colour, bg_colour, _ = lbl_options.formatted_text.get_format(*option_line)[0]
+                lbl_options.formatted_text.set_format(*option_line, ForegroundColours.BLACK, BackgroundColours.GREEN)
+                self.render()
+                time.sleep(0.6)
+                break
 
-            return user_option
+            # show error message
+            invalid_option_dw = DialogueWindow('invalid_alert_dw',30, 10, 40, 6, title='ERROR!', border_colour=ForegroundColours.RED)
+            lbl = TxtLabel('lbl', 28, 5, 1, 4, text=f'Option \"{user_option}\" is invalid! Please try again.',
+                     padding_left = 2, padding_right = 2, auto_size=True)
+            [lbl.formatted_text.set_format(y, slice(lbl.width), ForegroundColours.RED) for y in range(len(lbl.formatted_text))]
+            invalid_option_dw.controls.append(lbl)
+            beep()
+            self.show_dialogue(invalid_option_dw, lambda _: safe_input(RichFormatText('Press any key to continue...')))
 
-        return self.show_dialogue(menu_dw, get_user_input)
+        return user_option
