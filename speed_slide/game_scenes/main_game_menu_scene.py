@@ -1,13 +1,12 @@
 import time
-
 from tui import *
 from tui.controls import *
 from speed_slide.io import safe_input, beep
-from speed_slide.__game_consts import _Constants as Contants
+from speed_slide.__game_consts import _Constants as Constants
 
 class MainGameMenuScene(Scene):
     def __init__(self):
-        super().__init__(Contants.SCREEN_WIDTH, Contants.SCREEN_HEIGHT, '*')
+        super().__init__(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, '*')
 
         self.background_rft.set_random_colours_to_all(except_foreground=[ForegroundColours.BLACK, ForegroundColours.WHITE])
 
