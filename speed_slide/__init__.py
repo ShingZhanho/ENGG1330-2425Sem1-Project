@@ -79,6 +79,9 @@ def __start_new_game():
             __screen.play_scene()
             break
 
+def __goodbye():
+    __screen.transition_into_scene(GoodbyeScene(), transitions.scatter(200), Constants.ANIMATION_SECONDS_PER_FRAME)
+    __screen.play_scene()
 
 def main(**kwargs):
     # configures debug tools
@@ -98,5 +101,6 @@ def main(**kwargs):
         elif user_option == 'A':
             __about()
 
+    __goodbye()
     __screen.transition_into_blank_scene(transitions.scatter(200), Constants.ANIMATION_SECONDS_PER_FRAME)
     __screen.clear_screen()
