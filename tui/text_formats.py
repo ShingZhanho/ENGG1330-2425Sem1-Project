@@ -22,6 +22,9 @@ class ForegroundColours:
     def random_except(cls, *exceptions):
         return random.choice([x for x in range(30, 38) if x not in exceptions])
 
+    @classmethod
+    def override_default_as(cls, colour: int):
+        cls.DEFAULT = colour
 
 class BackgroundColours:
     """
@@ -46,6 +49,9 @@ class BackgroundColours:
     def random_except(cls, *exceptions):
         return random.choice([x for x in range(40, 48) if x not in exceptions])
 
+    @classmethod
+    def override_default_as(cls, colour: int):
+        cls.DEFAULT = colour
 
 class TextFormats:
     """
