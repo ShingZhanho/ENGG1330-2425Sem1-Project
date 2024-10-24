@@ -1,4 +1,4 @@
-from tui import Scene, ForegroundColours, RichFormatText, TextFormats
+from tui import Scene, ForegroundColours, RichFormatText, TextFormats, BackgroundColours
 from tui.controls import TxtLabel, DialogueWindow
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.io import safe_input, beep
@@ -211,7 +211,14 @@ class MainGameScene(Scene):
                 if user_input not in self.__gb.adjacent:
                     self.__display_error('Invalid input! You cannot slide this block to the empty space directly!')
                     continue
+
                 moves += 1
+                # highlight selected option
+                num_x, num_y = list(self.__gb.board.keys())[list(self.__gb.board.values()).index(user_input)]
+                lbl = self.__board_labels[(num_x, num_y)]
+                lbl.formatted_text.set_format(0, slice(2), ForegroundColours.BLACK, BackgroundColours.MAGENTA)
+                self.render()
+                time.sleep(0.6)
                 self.__gb.slide(user_input)
                 break
 
@@ -270,6 +277,7 @@ class MainGameScene(Scene):
             lbl = self.__board_labels[(x, y)]
             lbl_text = f'{num:0>2}' if num not in blinded else '**'
             lbl.text = lbl_text if num != 0 else '  '
+            lbl.formatted_text.set_format(0, slice(2), ForegroundColours.MAGENTA, BackgroundColours.TRANSPARENT)
         self.render()
 
     def __generate_random_event(self) -> tuple[str, int, str]:
