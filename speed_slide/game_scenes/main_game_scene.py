@@ -1,7 +1,7 @@
-from tui import Scene, ForegroundColours, RichFormatText, TextFormats, BackgroundColours
+from tui import Scene, ForegroundColours, RichFormatText, TextFormats
 from tui.controls import TxtLabel, DialogueWindow
 from speed_slide.__game_consts import _Constants as Constants
-from speed_slide.io import safe_input
+from speed_slide.io import safe_input, beep
 from speed_slide.game_scenes.__random_events_ascii_arts import EventASCIIArts as ASCIIArts
 import random
 import time
@@ -353,6 +353,7 @@ class MainGameScene(Scene):
         lbl_error.text += '\n\nPress enter to continue.\nHint: type /quit to return to menu, or /surrender to see your score.'
         [lbl_error.formatted_text.set_format(i, slice(36), ForegroundColours.RED) for i in range(len(lbl_error.formatted_text))]
         dw_error.controls.append(lbl_error)
+        beep()
         self.show_dialogue(dw_error, lambda _: input())
 
     class __GameBoard:

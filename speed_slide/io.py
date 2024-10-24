@@ -33,3 +33,9 @@ def safe_input(prompt: RichFormatText = RichFormatText('>>> ')):
             output += c
 
     return output
+
+def beep():
+    """
+    Produces a beep sound.
+    """
+    print('\a', end='', flush=True)

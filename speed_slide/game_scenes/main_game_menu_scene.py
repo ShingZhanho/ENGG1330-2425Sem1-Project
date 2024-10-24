@@ -1,6 +1,6 @@
 from tui import *
 from tui.controls import *
-from speed_slide.io import safe_input
+from speed_slide.io import safe_input, beep
 from speed_slide.__game_consts import _Constants as Contants
 
 class MainGameMenuScene(Scene):
@@ -50,6 +50,7 @@ class MainGameMenuScene(Scene):
                          padding_left = 2, padding_right = 2, auto_size=True)
                 [lbl.formatted_text.set_format(y, slice(lbl.width), ForegroundColours.RED) for y in range(len(lbl.formatted_text))]
                 invalid_option_dw.controls.append(lbl)
+                beep()
                 scene.show_dialogue(invalid_option_dw, lambda _: safe_input(RichFormatText('Press any key to continue...')))
 
             return user_option
