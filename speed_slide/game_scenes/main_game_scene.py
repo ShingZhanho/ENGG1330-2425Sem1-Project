@@ -307,16 +307,16 @@ class MainGameScene(Scene):
         dw_event.controls.append(
             TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
         )
-        lbl_prompt = TxtLabel('lbl_prompt', 36, 1, 2, 2, text='RANDOM EVENT! Press enter to reveal.')
+        lbl_prompt = TxtLabel('lbl_prompt', 38, 1, 0, 2, text=' RANDOM EVENT! Press enter to reveal. ')
         lbl_prompt.formatted_text.set_format(0, slice(36), ForegroundColours.CYAN, TextFormats.BOLD)
         dw_event.controls.append(lbl_prompt)
 
         self.show_dialogue(dw_event, None)
-        safe_input()
+        safe_input(RichFormatText('Press enter to reveal...'))
 
         dw_event.controls.clear()
         self.render()
-        time.sleep(2)
+        time.sleep(1)
 
         arts = ASCIIArts()
         ascii_arts_map = {
@@ -341,7 +341,7 @@ class MainGameScene(Scene):
         dw_event.controls.append(lbl_event_msg)
 
         self.render()
-        safe_input()
+        safe_input(RichFormatText('Press enter to continue...'))
         self.controls.remove(dw_event)
 
     def __display_error(self, msg: str):
