@@ -1,6 +1,7 @@
 from tui.controls import Control
 from tui.controls import DialogueWindow
 from tui.controls.rich_format_text import RichFormatText
+from tui.text_formats import BackgroundColours
 
 
 class Scene:
@@ -13,6 +14,7 @@ class Scene:
 
         self.background = background
         self.background_rft = RichFormatText.create_by_size(width, height, background)
+        [self.background_rft.set_format(i, slice(None), background=BackgroundColours.DEFAULT) for i in range(height)]
         self.controls: list[Control] = []  # list of controls in the scene
         self.width = width
         self.height = height
