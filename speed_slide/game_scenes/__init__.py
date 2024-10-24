@@ -6,3 +6,4 @@ from speed_slide.game_scenes.main_game_scene import MainGameScene
 from speed_slide.game_scenes.level_summary_scene import LevelSummaryScene
 from speed_slide.game_scenes.game_over_scene import GameOverScene
 from speed_slide.game_scenes.goodbye_scene import GoodbyeScene
+from speed_slide.game_scenes.help_scene import HelpScene

@@ -79,6 +79,10 @@ def __start_new_game():
             __screen.play_scene()
             break
 
+def __help():
+    __screen.transition_into_scene(HelpScene(), transitions.get_random(200), Constants.ANIMATION_SECONDS_PER_FRAME)
+    __screen.play_scene()
+
 def __goodbye():
     __screen.transition_into_scene(GoodbyeScene(), transitions.scatter(200), Constants.ANIMATION_SECONDS_PER_FRAME)
     __screen.play_scene()
@@ -98,6 +102,8 @@ def main(**kwargs):
             break
         elif user_option == 'N':
             __start_new_game()
+        elif user_option == 'H':
+            __help()
         elif user_option == 'A':
             __about()
 
