@@ -7,7 +7,6 @@ class _Constants:
     ### Sort items alphabetically ###
     ANIMATION_SECONDS_PER_FRAME = 0.02
     DEBUG = False
-    DEBUG_TOOLS = None
     SCREEN_HEIGHT = 30
     SCREEN_WIDTH = 110
     VERSION_STRING = '1.2.1 Build 241026'

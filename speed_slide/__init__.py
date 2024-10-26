@@ -2,7 +2,6 @@ from tui import Screen
 import tui.transitions as transitions
 from speed_slide.__game_consts import _Constants as Constants
 from speed_slide.game_scenes import *
-from speed_slide.__debug import DebugTools
 from tui.controls import TxtLabel
 
 __screen = Screen(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT)
@@ -88,8 +87,6 @@ def __goodbye():
     __screen.play_scene()
 
 def main(**kwargs):
-    # configures debug tools
-    Constants.DEBUG_TOOLS = DebugTools()
 
     __handle_launch_options(kwargs)
 
