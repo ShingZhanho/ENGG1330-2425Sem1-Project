@@ -19,7 +19,7 @@ class HelpScene(Scene):
         Displays the help information page-by-page.
         """
         page_counter: int = 1
-        total_pages: int = 2 # UPDATE THIS VALUE WHEN ADDING MORE PAGES
+        total_pages: int = 3 # UPDATE THIS VALUE WHEN ADDING MORE PAGES
         while page_counter <= total_pages:
             self.show_dialogue(HelpScene.__get_page(page_counter), None)
             option = safe_input(
@@ -136,4 +136,18 @@ class HelpScene(Scene):
 
                 dw.controls.extend([lbl_para1, lbl_para2, lbl_para3])
             # ================================= END [PAGE 2] =================================
+
+            # ================================= START [PAGE 3] ===============================
+            case 3:
+                dw.controls_id = 'dw_page3'
+
+                lbl_para1 = TxtLabel('lbl_para1', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                     text="As the the difficulty level increases, the game board will become larger. "
+                                          "It starts off as 3x3 and can get as large as 6x6. The more complex the board"
+                                          "the more points you get when you solve it.\n\n"
+                                          "Have fun and enjoy the game!")
+
+                dw.controls.append(lbl_para1)
+            # ================================= END [PAGE 3] =================================
+
         return dw

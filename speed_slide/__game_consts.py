@@ -10,4 +10,4 @@ class _Constants:
     DEBUG_TOOLS = None
     SCREEN_HEIGHT = 30
     SCREEN_WIDTH = 110
-    VERSION_STRING = '1.2.0 Build 241023'
+    VERSION_STRING = '1.2.1 Build 241026'
