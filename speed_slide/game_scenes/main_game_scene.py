@@ -330,10 +330,11 @@ class MainGameScene(Scene):
         Displays a dialogue and asks the user to reveal the random event.
         """
         dw_event = DialogueWindow('dw_event', 40, 15, 20, 6, title='??????', border_colour=ForegroundColours.CYAN)
-        dw_event.controls.append(
-            TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
-        )
-        lbl_prompt = TxtLabel('lbl_prompt', 38, 1, 0, 2, text=' RANDOM EVENT! Press enter to reveal. ')
+        lbl_back = TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
+        lbl_back.formatted_text.set_format(0, slice(38), background=BackgroundColours.DEFAULT)
+        dw_event.controls.append(lbl_back)
+
+        lbl_prompt = TxtLabel('lbl_prompt', 38, 1, 1, 2, text=' RANDOM EVENT! Press enter to reveal. ')
         lbl_prompt.formatted_text.set_format(0, slice(36), ForegroundColours.CYAN, TextFormats.BOLD)
         dw_event.controls.append(lbl_prompt)
 
