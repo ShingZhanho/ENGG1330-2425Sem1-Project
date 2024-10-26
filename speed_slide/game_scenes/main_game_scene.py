@@ -182,24 +182,38 @@ class MainGameScene(Scene):
                         terminate_signal = True
                         break
                     case '/give-up?':
-                        lbl_solution = TxtLabel('lbl_solution', 110, 1, 0, 0, auto_size=True,
+                        lbl_solution = TxtLabel('lbl_solution', 110, 1, 0, 0, 999, auto_size=True,
                                                 text='Never gonna give you up! ANS: ' + ' '.join(str(x) for x in self.__debug_solution))
                         self.add_control_at(lbl_solution, 0, 0)
                         break
                     case '/pass-b':
+                        # test: solves below target
                         if Constants.DEBUG:
                             self.__gb.solved = True
                             moves = self.__target_moves - 1
                             awards.append(('DEBUG PASS BELOW TARGET', 8))
                             break
                     case '/pass-a':
+                        # test: solves above target
                         if Constants.DEBUG:
                             self.__gb.solved = True
                             moves = self.__target_moves + 1
                             awards.append(('DEBUG PASS ABOVE TARGET', 11))
                             break
+                    case '/not-solve-max-moves':
+                        # test: moves = max moves and puzzle not solved
+                        if Constants.DEBUG:
+                            moves = max_moves
+                            self.__gb.solved = False
+                            break
+                    case '/solve-max-moves':
+                        # test: moves = max moves and puzzle solved
+                        if Constants.DEBUG:
+                            moves = max_moves
+                            self.__gb.solved = True
+                            break
                     case '/surrender':
-                        moves = max_moves
+                        moves = max_moves + 1
                         break
                 if not str.isnumeric(user_input):
                     self.__display_error('Invalid input! Please enter a number from the available options.')
@@ -227,10 +241,14 @@ class MainGameScene(Scene):
             if terminate_signal:
                 return -1, None
             if moves == max_moves:
+                if not self.__gb.solved:
+                    moves += 1 # avoid dead loop
+            if moves > max_moves:
+                self.__update_labels(list(range(1, self.__difficulty ** 2)))
                 for label in list(self.__board_labels.values()):
                     label.border_colour = ForegroundColours.RED
+                    label.text = 'XX'
                     label.formatted_text.set_format(0, slice(2), ForegroundColours.RED)
-                self.__update_labels(list(range(1, self.__difficulty ** 2)))
                 return 2, None
 
             if self.__gb.solved:
