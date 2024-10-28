@@ -53,7 +53,7 @@ class MainGameMenuScene(Scene):
                 fg_colour, bg_colour, _ = lbl_options.formatted_text.get_format(*option_line)[0]
                 lbl_options.formatted_text.set_format(*option_line, ForegroundColours.BLACK, BackgroundColours.GREEN)
                 self.render()
-                time.sleep(0.6)
+                time.sleep(0.2)
                 break
 
             # show error message

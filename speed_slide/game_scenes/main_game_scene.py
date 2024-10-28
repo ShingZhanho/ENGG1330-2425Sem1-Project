@@ -235,7 +235,7 @@ class MainGameScene(Scene):
                 lbl = self.__board_labels[(num_x, num_y)]
                 lbl.formatted_text.set_format(0, slice(2), ForegroundColours.BLACK, BackgroundColours.MAGENTA)
                 self.render()
-                time.sleep(0.6)
+                time.sleep(0.2)
                 self.__gb.slide(user_input)
                 break
 
