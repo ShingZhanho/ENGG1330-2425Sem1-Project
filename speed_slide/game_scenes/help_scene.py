@@ -19,7 +19,7 @@ class HelpScene(Scene):
         Displays the help information page-by-page.
         """
         page_counter: int = 1
-        total_pages: int = 3 # UPDATE THIS VALUE WHEN ADDING MORE PAGES
+        total_pages: int = 5 # UPDATE THIS VALUE WHEN ADDING MORE PAGES
         while page_counter <= total_pages:
             self.show_dialogue(HelpScene.__get_page(page_counter), None)
             option = safe_input(
@@ -52,7 +52,7 @@ class HelpScene(Scene):
         dw_height = Constants.SCREEN_HEIGHT - 4
         dw_x = 3
         dw_y = 2
-        dw = DialogueWindow('dw_name_pending', dw_width, dw_height, dw_x, dw_y, 0, '',
+        dw = DialogueWindow('dw_name_pending', dw_width, dw_height, dw_x, dw_y, 0, 'HELP',
                             border_colour=ForegroundColours.CYAN)
         accumulated_y = 2 # calculating the y-coordinate of the controls
         match page_num:
@@ -147,7 +147,99 @@ class HelpScene(Scene):
                                           "the more points you get when you solve it.\n\n"
                                           "Have fun and enjoy the game!")
 
-                dw.controls.append(lbl_para1)
+                lbl_keep_reading = TxtLabel('lbl_keep_reading', dw_width - 4, 1, 2, 10, 0, auto_size=True,
+                                            text="Keep reading for a general solution that works for every slide puzzle"
+                                                 ", or return to the main menu and start a new game to discover your"
+                                                 "own method of solving the puzzle.")
+                accumulated_y = lbl_keep_reading.y_coord + lbl_keep_reading.height + 1
+
+                lbl_spoiler = TxtLabel('lbl_spoiler', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                       text="SPOILER ALERT! The general solution applies to all sliding puzzles and "
+                                            "may spoil the fun part - trying - of the game. Turn to the next page only "
+                                            "if you are desperate to win. ;-)")
+                [lbl_spoiler.formatted_text
+                 .set_format(i, slice(None), ForegroundColours.RED, text_format=TextFormats.BOLD)
+                 for i in range(lbl_spoiler.height)]
+
+                dw.controls.extend([lbl_para1, lbl_keep_reading, lbl_spoiler])
             # ================================= END [PAGE 3] =================================
+
+            # ================================= START [PAGE 4] ===============================
+            case 4:
+                dw.controls_id = 'dw_page4'
+
+                lbl_step1_heading = TxtLabel('lbl_step1_heading', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                             text="STEP 1")
+                lbl_step1_heading.formatted_text.set_format(0, slice(None), text_format=TextFormats.UNDERLINE)
+                accumulated_y += lbl_step1_heading.height + 1
+
+                lbl_step1 = TxtLabel('lbl_step1', dw_width - 8, 1, 6, accumulated_y, 0, auto_size=True,
+                                     text="Solve the first horizontal row from left to right first, but leave the last"
+                                          " two blocks for later. For example, if the board is 4x4, solve for numbers 1"
+                                          " and 2 first, and leave numbers 3 and 4 alone for now.")
+                accumulated_y += lbl_step1.height + 1
+
+                lbl_step2_heading = TxtLabel('lbl_step2_heading', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                                text="STEP 2")
+                lbl_step2_heading.formatted_text.set_format(0, slice(None), text_format=TextFormats.UNDERLINE)
+                accumulated_y += lbl_step2_heading.height + 1
+
+                lbl_step2 = TxtLabel('lbl_step2', dw_width - 8, 1, 6, accumulated_y, 0, auto_size=True,
+                                     text="Move the second last block of the row to the last spot of the row. For "
+                                          "example, if the first row is 01 02 ?? ?? now, move 03 to the last spot of"
+                                          " the row, turning it into 01 02 ?? 03.\n\nThen, move the last block of the "
+                                          "row directly below the last spot of the row. Keeping the above example, 04 "
+                                          "should now be moved directly below 03.\n\nNow, you can slide 03 and 04 back "
+                                          "into their original spots. The first row should now be solved.")
+                accumulated_y += lbl_step2.height + 1
+
+                lbl_step3_heading = TxtLabel('lbl_step3_heading', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                                text="STEP 3")
+                lbl_step3_heading.formatted_text.set_format(0, slice(None), text_format=TextFormats.UNDERLINE)
+                accumulated_y += lbl_step3_heading.height + 1
+
+                lbl_step3 = TxtLabel('lbl_step3', dw_width - 8, 1, 6, accumulated_y, 0, auto_size=True,
+                                     text="Now solve the first vertical column from top to bottom, but leave the last "
+                                          "two blocks for later. For example, if the board is 4x4, the first column "
+                                          "should be 01 05 ?? ??. Notice that 01 is already in place from STEP 1, so "
+                                          "you only need to solve for 05.")
+
+                lbl_tbc = TxtLabel('lbl_tbc', dw_width - 2, 1, 1, dw_height - 2, 0, auto_size=True,
+                                   text=f"{'Go on to the next page >>': >{dw_width - 2}}")
+
+                dw.controls.extend([lbl_step1_heading, lbl_step1, lbl_step2_heading, lbl_step2,
+                                    lbl_step3_heading, lbl_step3, lbl_tbc])
+            # ================================= END [PAGE 4] =================================
+
+            # ================================= START [PAGE 5] ===============================
+            case 5:
+                dw.controls_id = 'dw_page5'
+
+                lbl_step4_heading = TxtLabel('lbl_step4_heading', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                                text="STEP 4")
+                lbl_step4_heading.formatted_text.set_format(0, slice(None), text_format=TextFormats.UNDERLINE)
+                accumulated_y += lbl_step4_heading.height + 1
+
+                lbl_step4 = TxtLabel('lbl_step4', dw_width - 8, 1, 6, accumulated_y, 0, auto_size=True,
+                                     text="Now move the second last block of the column to the last spot of the column."
+                                          " For example, if the first column is 01 05 ?? ?? now, move 09 to the last "
+                                          "spot of the column, turning it into 01 05 ?? 09.\n\nThen, move the last "
+                                          "block of the column directly to the right of the last spot of the column. "
+                                          "Keeping the above example, 13 should now be moved directly to the right of "
+                                          "09.\n\nNow, you can slide 09 and 13 back into their original spots. The "
+                                          "first column should now be solved.")
+                accumulated_y += lbl_step4.height + 1
+
+                lbl_step5_heading = TxtLabel('lbl_step5_heading', dw_width - 4, 1, 2, accumulated_y, 0, auto_size=True,
+                                                text="STEP 5")
+                lbl_step5_heading.formatted_text.set_format(0, slice(None), text_format=TextFormats.UNDERLINE)
+                accumulated_y += lbl_step5_heading.height + 1
+
+                lbl_step5 = TxtLabel('lbl_step5', dw_width - 8, 1, 6, accumulated_y, 0, auto_size=True,
+                                     text="Repeat STEP 1 to STEP 2 to solve the second horizontal row, and then repeat "
+                                          "STEP 3 to STEP 4 to solve the second vertical column. Then solve the third "
+                                          "row and column, and so on, until the board is solved.")
+
+                dw.controls.extend([lbl_step4_heading, lbl_step4, lbl_step5_heading, lbl_step5])
 
         return dw
