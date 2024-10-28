@@ -146,7 +146,10 @@ class MainGameScene(Scene):
             # update footer
             available_options = '  '
             for i in range(4):
-                item = self.__gb.adjacent[i] if i < len(self.__gb.adjacent) else '--'
+                # display adjacent blocks, with blinded blocks
+                item = (self.__gb.adjacent[i]
+                        if self.__gb.adjacent[i] not in blinded_blocks else '**')\
+                    if i < len(self.__gb.adjacent) else '--'
                 available_options += f'{item:0>2} '
             lbl_footer.text = f'You may slide the following blocks:\n{available_options}'
 
@@ -331,7 +334,7 @@ class MainGameScene(Scene):
         """
         dw_event = DialogueWindow('dw_event', 40, 15, 20, 6, title='??????', border_colour=ForegroundColours.CYAN)
         lbl_back = TxtLabel('lbl_back', 38, 13, 1, 1, text='\n'.join('?' * 38 for _ in range(13))) # backdrop
-        lbl_back.formatted_text.set_format(0, slice(38), background=BackgroundColours.DEFAULT)
+        [lbl_back.formatted_text.set_format(i, slice(None), background=BackgroundColours.DEFAULT) for i in range(len(lbl_back.formatted_text))]
         dw_event.controls.append(lbl_back)
 
         lbl_prompt = TxtLabel('lbl_prompt', 38, 1, 1, 2, text=' RANDOM EVENT! Press enter to reveal. ')
@@ -342,6 +345,7 @@ class MainGameScene(Scene):
         safe_input(RichFormatText('Press enter to reveal...'))
 
         dw_event.controls.clear()
+        self.__update_labels(None) # fix (workaround): remove highlighted block
         self.render()
         time.sleep(1)
 
