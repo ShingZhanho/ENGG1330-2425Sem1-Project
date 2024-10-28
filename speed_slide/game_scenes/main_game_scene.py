@@ -385,7 +385,8 @@ class MainGameScene(Scene):
         [lbl_error.formatted_text.set_format(i, slice(36), ForegroundColours.RED) for i in range(len(lbl_error.formatted_text))]
         dw_error.controls.append(lbl_error)
         beep()
-        self.show_dialogue(dw_error, lambda _: input())
+        self.show_dialogue(dw_error, lambda _: safe_input(RichFormatText('Press enter to dismiss...')
+                                                          .set_format(0, slice(None), ForegroundColours.MAGENTA)))
 
     class __GameBoard:
         """
