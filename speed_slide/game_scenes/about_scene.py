@@ -44,7 +44,7 @@ class AboutScene(Scene):
     / \   Game Design | Project Video | Docs (Player's Handbook)""", padding_left=2, padding_right=2, padding_top=1, padding_bottom=1,
                                    draw_borders=True, border_colour=ForegroundColours.MAGENTA)
 
-        info_card_david = TxtLabel('info_card_davie', 80, 6, -81, 22, 0, r"""
+        info_card_david = TxtLabel('info_card_david', 80, 6, -81, 22, 0, r"""
     ( )   WU, Jun Hao (David)
     -|-   BEng 28' | u3638850@connect.hku.hk | 3036388501
     / \   Testing | Project Video""", padding_left=2, padding_right=2, padding_top=1, padding_bottom=1,
