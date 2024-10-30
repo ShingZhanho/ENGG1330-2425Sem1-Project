@@ -81,11 +81,12 @@ $ python3 main.py --graphics-mode=performant
 After the title animation, you are presented with the main menu. You may
 choose from one of the following options:
 
-- **[N]ew Game**: Starts the game from level 1-1.
-- **[H]elp**: Displays the help information. Provides introduction to the game's
+- **[H]ow to play**: Displays the help information.
+    Provides introduction to the game's
     goal and how you may control it. There are also useful tricks and tips in
     the help section. You should read them if this is your first time playing
     SpeedSlide.
+- **[N]ew Game**: Starts the game from level 1-1.
 - **[A]bout**: Displays the information about the game development team.
 - **[Q]uit**: Leaves the game.
 

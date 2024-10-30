@@ -26,8 +26,8 @@ class MainGameMenuScene(Scene):
         lbl_header = TxtLabel('lbl_header', 50, 1, 5, 3, text='Select an option from the menu below:')
         # menu options
         lbl_options = TxtLabel('lbl_options', 50, 5, 5, 5, text="""## PLAY
+    - [H]ow to Play?
     - [N]ew Game
-    - [H]elp
     
 ## MISCELLANEOUS
     - [A]bout
@@ -45,8 +45,8 @@ class MainGameMenuScene(Scene):
             user_option = safe_input(RichFormatText('Select an option: ').set_format(0, slice(19), ForegroundColours.MAGENTA)).upper()[:1]
             if user_option in valid_inputs:
                 option_line = {
-                    'N': (1, slice(4, 17)),
-                    'H': (2, slice(4, 13)),
+                    'H': (1, slice(4, 20)),
+                    'N': (2, slice(4, 17)),
                     'A': (5, slice(4, 14)),
                     'Q': (6, slice(4, 13)),
                 }[user_option]
