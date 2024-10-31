@@ -1,7 +1,7 @@
 from tui.controls import Control
 from tui.controls.__border_tools import DoubleBorders
 from tui.controls.rich_format_text import RichFormatText
-from tui.text_formats import ForegroundColours as FColours
+from tui.text_formats import ForegroundColours as FColours, BackgroundColours as BColours
 import time
 
 class DialogueWindow(Control):
@@ -53,7 +53,7 @@ class DialogueWindow(Control):
         self._internal_rft[-1] = DoubleBorders.LOWER_LEFT + DoubleBorders.UPPER_LOWER * (self.width - 2) + DoubleBorders.LOWER_RIGHT
 
         # applies formatting for borders
-        (self._internal_rft.set_format(0, slice(self.width), foreground=self.border_colour)
+        (self._internal_rft.set_format(0, slice(self.width), foreground=self.border_colour, background=BColours.DEFAULT)
          .set_format(-1, slice(self.width), foreground=self.border_colour))
         for i in range(1, self.height-1):
             (self._internal_rft.set_format(i, slice(1), foreground=self.border_colour)
