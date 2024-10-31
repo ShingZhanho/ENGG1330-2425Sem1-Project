@@ -347,7 +347,7 @@ class MainGameScene(Scene):
         dw_event.controls.clear()
         self.__update_labels(None) # fix (workaround): remove highlighted block
         self.render()
-        time.sleep(1)
+        time.sleep(0.6)
 
         arts = ASCIIArts()
         ascii_arts_map = {
