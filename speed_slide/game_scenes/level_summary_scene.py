@@ -72,7 +72,7 @@ class LevelSummaryScene(Scene):
             time.sleep(0.6)
 
             total_score_change += score_change
-            step = int(0.1919191919 * 10 ** (len(str(score_change)) - 1))
+            step = int(0.1919191919 * 10 ** (len(str(abs(score_change))) - 1))
             score_lbl_level.animate_change_score(total_score_change, step, self.on_scene_update, self)
 
             time.sleep(1)
@@ -82,7 +82,7 @@ class LevelSummaryScene(Scene):
             self.render()
             time.sleep(0.6)
 
-        self.total_score += total_score_change
+        self.total_score = min(self.total_score + total_score_change, 9999999999)
         step = int(0.1919191919 * 10 ** (len(str(self.total_score)) - 1))
         score_lbl_total.animate_change_score(self.total_score, step, self.on_scene_update, self)
 

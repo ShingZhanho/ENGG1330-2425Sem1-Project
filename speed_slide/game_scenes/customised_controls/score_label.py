@@ -44,8 +44,13 @@ class ScoreLabel(Control):
             time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
             return
 
+        step = abs(step)
+
         for i in range(self.__score, new_score, step if new_score > self.__score else -step):
-            self.__score = i if i + step <= new_score else new_score
+            if self.__score < new_score:
+                self.__score = i if i + step <= new_score else new_score
+            else:
+                self.__score = i if i - step >= new_score else new_score
             self.__render()
             parent.render() if parent is not None else None
             screen_painter(parent) if screen_painter is not None and parent is not None else None
