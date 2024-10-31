@@ -106,7 +106,7 @@ class MainGameScene(Scene):
 
         moves = 0
         self.__target_moves = self.__target_moves * 2
-        max_moves = self.__target_moves * 4
+        max_moves = self.__target_moves * 3
 
         # right hand side info
         lbl_target = TxtLabel('lbl_target', 25, 2, dw_main.width - 25, 2,
