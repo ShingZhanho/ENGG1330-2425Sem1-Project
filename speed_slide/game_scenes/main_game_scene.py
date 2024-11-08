@@ -7,6 +7,9 @@ import random
 import time
 
 
+# FOR VIDEO PRODUCTION
+VIDEO_random_event_counter = 0
+
 class MainGameScene(Scene):
     """
     The main game scene.
@@ -77,18 +80,29 @@ class MainGameScene(Scene):
                 self.render()
                 time.sleep(Constants.ANIMATION_SECONDS_PER_FRAME)
 
-        # shuffle the game board
-        last_n_moves = [] # stores last n moves to reduce redundant random moves, n = difficulty
-        for _ in range(self.__target_moves if not Constants.DEBUG else 3):
-            while True:
-                move = random.choice(self.__gb.adjacent)
-                if move not in last_n_moves or all(self.__gb.adjacent[i] in last_n_moves for i in range(len(self.__gb.adjacent))):
-                    break
+        # # shuffle the game board
+        # last_n_moves = [] # stores last n moves to reduce redundant random moves, n = difficulty
+        # for _ in range(self.__target_moves if not Constants.DEBUG else 3):
+        #     while True:
+        #         move = random.choice(self.__gb.adjacent)
+        #         if move not in last_n_moves or all(self.__gb.adjacent[i] in last_n_moves for i in range(len(self.__gb.adjacent))):
+        #             break
+        #     self.__gb.slide(move)
+        #     self.__debug_solution.insert(0, move)
+        #     last_n_moves.append(move)
+        #     if len(last_n_moves) > self.__difficulty:
+        #         last_n_moves.pop(0)
+
+        # SHUFFLE FOR VIDEO PRODUCTION
+        shuffling_moves = []
+        if self.__difficulty == 3:
+            shuffling_moves = [8, 5, 6, 3, 2, 6, 4, 1, 6]
+        elif self.__difficulty == 4:
+            shuffling_moves = [15, 11, 7, 6, 5, 1, 2, 5, 10, 7, 11, 14]
+            self.__target_moves = 3
+
+        for move in shuffling_moves:
             self.__gb.slide(move)
-            self.__debug_solution.insert(0, move)
-            last_n_moves.append(move)
-            if len(last_n_moves) > self.__difficulty:
-                last_n_moves.pop(0)
 
         time.sleep(1)
 
@@ -158,19 +172,18 @@ class MainGameScene(Scene):
             self.render()
 
             # random event when target < moves < max
-            if self.__target_moves < moves < max_moves:
-                if random.choices((True, False), weights=(30, 70), k=1)[0]:
-                    event_msg, points_change, event_name = self.__generate_random_event()
-                    if event_msg != 'None' and points_change == 0:
-                        # blinded block event
-                        if blind_event_counter < self.__difficulty - 2:
-                            blind_event_counter += 1
-                            self.__display_random_event((event_msg, points_change))
-                            blinded_blocks.extend(random.choices(range(1, self.__difficulty ** 2), k=2))
-                    elif event_msg != 'None':
-                        # other random events
+            if self.__difficulty == 4 and 7 < moves < 10: # MODIFIED FOR VIDEO PRODUCTION
+                event_msg, points_change, event_name = self.__generate_random_event() # WILL RETURN EVENTS ACCORDING TO VIDEO_random_event_counter
+                if event_msg != 'None' and points_change == 0:
+                    # blinded block event
+                    if blind_event_counter < self.__difficulty - 2:
+                        blind_event_counter += 1
                         self.__display_random_event((event_msg, points_change))
-                        awards.append((event_name, points_change))
+                        blinded_blocks.extend(random.choices(range(1, self.__difficulty ** 2), k=2))
+                elif event_msg != 'None':
+                    # other random events
+                    self.__display_random_event((event_msg, points_change))
+                    awards.append((event_name, points_change))
 
             self.__update_labels(blinded_blocks)
 
@@ -189,32 +202,6 @@ class MainGameScene(Scene):
                                                 text='Never gonna give you up! ANS: ' + ' '.join(str(x) for x in self.__debug_solution))
                         self.add_control_at(lbl_solution, 0, 0)
                         break
-                    case '/pass-b':
-                        # test: solves below target
-                        if Constants.DEBUG:
-                            self.__gb.solved = True
-                            moves = self.__target_moves - 1
-                            awards.append(('DEBUG PASS BELOW TARGET', 8))
-                            break
-                    case '/pass-a':
-                        # test: solves above target
-                        if Constants.DEBUG:
-                            self.__gb.solved = True
-                            moves = self.__target_moves + 1
-                            awards.append(('DEBUG PASS ABOVE TARGET', 11))
-                            break
-                    case '/not-solve-max-moves':
-                        # test: moves = max moves and puzzle not solved
-                        if Constants.DEBUG:
-                            moves = max_moves
-                            self.__gb.solved = False
-                            break
-                    case '/solve-max-moves':
-                        # test: moves = max moves and puzzle solved
-                        if Constants.DEBUG:
-                            moves = max_moves
-                            self.__gb.solved = True
-                            break
                     case '/surrender':
                         moves = max_moves + 1
                         break
@@ -315,17 +302,9 @@ class MainGameScene(Scene):
             ('A sneaky mouse stole 100 points from you! :-(', -100, 'SNEAKY MOUSE'),
             ('Bad luck! A witch cursed you! -300 points! @#%$!', -300, 'WITCH CURSE'),
         )
-        bad_events_weight = self.__difficulty / (self.__difficulty + self.__difficulty ** 2)
-        good_events_weight = 1 - bad_events_weight
-        event_weights = (
-            75, # None
-            5,  # Blinded blocks
-            good_events_weight * 20 * 0.8, # Golden coin
-            good_events_weight * 20 * 0.2, # Angel
-            bad_events_weight * 20 * 0.8, # Mouse
-            bad_events_weight * 20 * 0.2, # Witch
-        )
-        event = random.choices(events, weights=event_weights, k=1)[0]
+        global VIDEO_random_event_counter
+        event = events[1 if VIDEO_random_event_counter == 1 else 3] # MODIFIED FOR VIDEO PRODUCTION
+        VIDEO_random_event_counter += 1
         return event
 
     def __display_random_event(self, event: tuple[str, int]):
