@@ -56,8 +56,8 @@ class DialogueWindow(Control):
         (self._internal_rft.set_format(0, slice(self.width), foreground=self.border_colour, background=BColours.DEFAULT)
          .set_format(-1, slice(self.width), foreground=self.border_colour))
         for i in range(1, self.height-1):
-            (self._internal_rft.set_format(i, slice(1), foreground=self.border_colour)
-             .set_format(i, slice(-1, self.width), foreground=self.border_colour))
+            (self._internal_rft.set_format(i, slice(1), foreground=self.border_colour, background=BColours.DEFAULT)
+             .set_format(i, slice(-1, self.width), foreground=self.border_colour, background=BColours.DEFAULT))
 
     def get_control(self, control_id: str) -> Control:
         """
