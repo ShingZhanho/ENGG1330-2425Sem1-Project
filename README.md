@@ -1,3 +1,9 @@
+<!--
+ABOUT FILE FORMAT MD AND TXT
+Although the README file is written in Markdown syntax, it is still readable
+as if it is a plaintext document.
+-->
+
 # SpeedSlide Manual for Players and Developers
 
 ## Table of Contents
@@ -12,7 +18,7 @@
 >   - [Build](#1-build)
 >   - [Debug Mode](#2-debug-mode)
 >   - [Project Structure](#3-project-structure)
-
+>   - [Game Mechanics](#4-game-mechanics)
 ## `0x00` Introduction
 
 This document consists of two parts: one for players and one for developers.
@@ -20,9 +26,7 @@ You will find information about how to launch and play the game, the goal and
 aim of the game in the first part. The second part is more technical and is
 intended for developers who would like to contribute or modify the game.
 This README provides only brief information on the gameplay and its 
-implementations behind the scene. For more detailed information, such as the 
-reference for the `TUI` module, please refer to the separate file at
-`./tui/README.md`.
+implementations behind the scene.
 
 ## `0x01` Instructions for Players
 
@@ -294,3 +298,32 @@ refer to the docstrings in the source code.
 >   for up to 10 digits (positive, 9 digits if negative).
 > - Although it uses an internal `TxtLabel` control, it does not inherit from
 >   it and hence they do not share the same members.
+
+### 4 Game Mechanics
+
+The game is implemented through an internal class `__GameBoard`. The class
+stores the board's status in the format of `dict[tuple[int, int], int]`,
+where the key of the dictionary is the coordinates of the number block, and
+the value being the number.
+
+At the start of each level, a new `__GameBoard` is created, which contains
+a game board in its solved state. Then, the board is shuffled. To ensure
+solvability, shuffling always starts with the initial state of a solved
+board. The `slide()` function of `__GameBoard` is called to slide a certain
+block into the empty space for several times.
+
+To find the blocks that are available for sliding, a method `find_adjacent()`
+can be called. The function looks up the four possible locations, namely the
+blocks above, below, on the left of, on the right of the empty space. The
+results are stored in `__GameBoard.adjacent`, which is a list. The maximum
+possible length of the list is 4, since adjacent blocks can be less than 4
+when the empty space is at the edges.
+
+Each time the `slide()` function is called, it will check whether the block
+the player is trying to slide is within `__GameBoard.adjacent`, and make the
+move if the slide is possible. `True` is returned for a successful slide, and
+`False` otherwise.
+
+Every time the board is updated, `__check_if_solved()` is called to check
+whether the board has been solved. And the main game loop will use this
+information to determine whether to exit the loop and return the results.
