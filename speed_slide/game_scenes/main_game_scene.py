@@ -252,14 +252,16 @@ class MainGameScene(Scene):
                     label.border_colour = ForegroundColours.RED
                     label.text = 'XX'
                     label.formatted_text.set_format(0, slice(2), ForegroundColours.RED)
+                self.render()
                 return 2, None
 
             if self.__gb.solved:
                 awards.insert(0, ('PUZZLE SOLVED', 1000 * self.__difficulty))
+                self.__update_labels(None)
                 for label in list(self.__board_labels.values()):
                     label.border_colour = ForegroundColours.GREEN
                     label.formatted_text.set_format(0, slice(2), ForegroundColours.GREEN)
-                self.__update_labels(None)
+                self.render()
             if self.__gb.solved and moves <= self.__target_moves: # within target moves
                 awards.insert(1, ('BELOW TARGET', int((self.__target_moves - moves) * self.__difficulty ** 2) * 100))
                 return 0, awards
