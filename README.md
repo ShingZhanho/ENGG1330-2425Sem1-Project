@@ -1,8 +1,7 @@
-<!--
-ABOUT FILE FORMAT MD AND TXT
-Although the README file is written in Markdown syntax, it is still readable
-as if it is a plaintext document.
--->
+# Related Videos
+| Demonstration                                                                                              | Trailer                                                                                                    |
+|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| [![YouTube](http://i.ytimg.com/vi/7Z3sSEoryKM/hqdefault.jpg)](https://www.youtube.com/watch?v=7Z3sSEoryKM) | [![YouTube](http://i.ytimg.com/vi/Kz2ZYzK26N4/hqdefault.jpg)](https://www.youtube.com/watch?v=Kz2ZYzK26N4) |
 
 # SpeedSlide Manual for Players and Developers
 
