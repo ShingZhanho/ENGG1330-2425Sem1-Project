@@ -1,3 +1,8 @@
+> [!Note]
+> **[ARCHIVED REPOSITORY]**
+> Following the end of the course, this repository has been archived and is no
+> longer maintained.
+
 # Related Videos
 | Demonstration                                                                                              | Trailer                                                                                                    |
 |------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|

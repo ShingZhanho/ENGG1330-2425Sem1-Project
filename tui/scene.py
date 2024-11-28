@@ -6,7 +6,7 @@ from tui.text_formats import BackgroundColours
 
 class Scene:
     """
-    The basic class for a scene.
+    The base class for a scene.
     """
 
     def __init__(self, width: int, height: int, background: str = ' ', exit_transition: callable = None):
