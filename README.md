@@ -1,3 +1,9 @@
+> [!Tip]
+> **[Grade of Project]**
+> This project has received an overall grade of A+. All sub-grades (i.e. Game Trailer,
+> Demo Video, Difficulty Level, Correctness, Innovation, Readability and Documentation)
+> were also graded A+. It has received 3.53/5 in peer review.
+
 > [!Note]
 > **[ARCHIVED REPOSITORY]**
 > Following the end of the course, this repository has been archived and is no
